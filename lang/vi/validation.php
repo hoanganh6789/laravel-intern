@@ -126,6 +126,8 @@ return [
         'city'                  => 'thành phố',
         'content'               => 'nội dung',
         'country'               => 'quốc gia',
+        'district'              => 'quận/huyện',
+        'ward'                  => 'phường/xã',
         'date'                  => 'ngày',
         'day'                   => 'ngày',
         'description'           => 'mô tả',
@@ -151,5 +153,16 @@ return [
         'title'                 => 'tiêu đề',
         'username'              => 'tên đăng nhập',
         'year'                  => 'năm',
+
+        //
+        'user.name'             => 'tên',
+        'user.email'            => 'email',
+        'user.password'         => 'mật khẩu',
+        'user.avatar'           => 'ảnh đại diện',
+        'user.phone'            => 'số điên thoại',
+        'address.address'       => 'đia chỉ',
+        'address.city'          => 'thành phố',
+        'address.district'      => 'quận/huyện',
+        'address.ward'          => 'phường/xã'
     ],
 ];

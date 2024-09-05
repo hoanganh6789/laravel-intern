@@ -1,5 +1,6 @@
 @extends('admin.layouts.master')
 @section('title', 'New User')
+
 @section('content')
 <div class="row">
     <div class="col-12">
@@ -17,7 +18,8 @@
         </div>
 
 
-        <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="form-user-create" action="{{ route('admin.users.store') }}" method="POST"
+            enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="col-lg-8">
@@ -39,8 +41,8 @@
                                                 </div>
                                             </label>
                                             <input class="form-control d-none" value="" id="project-image-input"
-                                                type="file" accept="image/png, image/gif, image/jpeg" name="avatar"
-                                                onchange="previewImage(event)">
+                                                type="file" accept="image/png, image/gif, image/jpeg"
+                                                name="user[avatar]" onchange="previewImage(event)">
                                         </div>
                                         <div class="avatar-lg">
                                             <div class="avatar-title bg-light rounded-circle">
@@ -55,27 +57,43 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Name</label>
-                                        <input name="name" type="text" class="form-control"
-                                            placeholder="Enter user name..." required>
+                                        <input name="user[name]" type="text"
+                                            class="form-control @error('user.name') is-invalid @enderror"
+                                            placeholder="Enter user name..." value="{{ old('user.name') }}">
+                                        @error('user.name')
+                                        <div class="text-danger fst-italic">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">Email</label>
-                                        <input name="email" type="email" class="form-control"
-                                            placeholder="Enter user email..." required>
+                                        <input name="user[email]" type="email"
+                                            class="form-control @error('user.email') is-invalid @enderror"
+                                            placeholder="Enter user email..." value="{{ old('user.email') }}">
+                                        @error('user.email')
+                                        <div class="text-danger fst-italic">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Password</label>
-                                        <input name="password" type="password" class="form-control"
-                                            placeholder="Enter user password..." required>
+                                        <input name="user[password]" type="password"
+                                            class="form-control @error('user.password') is-invalid @enderror"
+                                            placeholder="Enter user password..." value="{{ old('user.password') }}">
+                                        @error('user.password')
+                                        <div class="text-danger fst-italic">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">Phone</label>
-                                        <input name="phone" type="text" class="form-control"
-                                            placeholder="Enter user phone..." required>
+                                        <input name="user[phone]" type="text"
+                                            class="form-control @error('user.phone') is-invalid @enderror"
+                                            placeholder="Enter user phone..." value="{{ old('user.phone') }}">
+                                        @error('user.phone')
+                                        <div class="text-danger fst-italic">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -89,33 +107,55 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Address</label>
-                                        <input name="address" type="text" class="form-control"
-                                            placeholder="Enter user address..." required>
+                                        <input name="address[address]" type="text" class="form-control"
+                                            placeholder="Enter user address..." value="{{ old('address.address') }}">
+                                        @error('address.address')
+                                        <div class="text-danger fst-italic">{{ $message }}</div>
+                                        @enderror
                                     </div>
+
                                     <div class="mb-3">
-                                        <label class="form-label">City</label>
-                                        <select class="form-select" name="city">
-                                            <option value="Member" selected>Member</option>
-                                            <option value="Admin">Admin</option>
+                                        <label class="form-label">District</label>
+                                        <select class="form-select" id="district"
+                                            value="{{ old('district') }}">
+                                            <option value="0" selected>Chọn Quận Huyện</option>
                                         </select>
+
+                                        @error('address.district')
+                                        <div class="text-danger fst-italic">{{ $message }}</div>
+                                        @enderror
                                     </div>
+
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label class="form-label">District</label>
-                                        <select class="form-select" name="district">
-                                            <option value="Member" selected>Member</option>
-                                            <option value="Admin">Admin</option>
+                                        <label class="form-label">City</label>
+                                        <select class="form-select"id="city"
+                                            value="{{ old('address.city') }}">
+                                            <option value="0" selected>Chọn Thành Phố</option>
                                         </select>
+
+                                        @error('address.city')
+                                        <div class="text-danger fst-italic">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Ward</label>
-                                        <select class="form-select" name="ward">
-                                            <option value="Member" selected>Member</option>
-                                            <option value="Admin">Admin</option>
+                                        <select class="form-select" id="ward"
+                                            value="{{ old('address.ward') }}">
+                                            <option value="0" selected>Chọn Phường Xã</option>
                                         </select>
+
+                                        @error('address.ward')
+                                        <div class="text-danger fst-italic">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
+
+                                <input type="hidden" name="address[city]" id="city-hidden">
+                                <input type="hidden" name="address[district]" id="district-hidden">
+                                <input type="hidden" name="address[ward]" id="ward-hidden">
                             </div>
                         </div>
                     </div>
@@ -128,16 +168,16 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Role</label>
-                                <select class="form-select" name="role">
-                                    <option value="Member" selected>Member</option>
-                                    <option value="Admin">Admin</option>
+                                <select class="form-select" name="user[role]">
+                                    <option value="member" selected>Member</option>
+                                    <option value="admin">Admin</option>
                                 </select>
                             </div>
 
                             <div>
                                 <div class="form-check form-switch mb-3">
                                     <label class="form-check-label">is_active</label>
-                                    <input class="form-check-input" type="checkbox" checked="" name="is_active">
+                                    <input class="form-check-input" type="checkbox" checked="" name="user[is_active]">
                                 </div>
                             </div>
                         </div>
@@ -159,6 +199,7 @@
 @endsection
 
 @section('script')
+
 <script src="{{ asset('assets/theme/admin/libs/dropzone/dropzone-min.js') }}"></script>
 <script src="{{ asset('assets/js/admin/users/create.js') }}"></script>
 {{-- <script src="{{ asset('assets/theme/admin/js/pages/form-file-upload.init.js') }}"></script> --}}
