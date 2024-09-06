@@ -9,18 +9,33 @@
             <a href="demo4.html#">Links</a>
             <div class="header-menu">
                 <ul>
+                    @guest
                     <li>
-                        <a href="{{ route('account.index') }}">My Account</a>
+                        <a href="{{ route('login') }}">Login</a>
                     </li>
+
                     <li>
-                        <a href="{{ route('wishlist.index') }}">My Wishlist</a>
+                        <a href="{{ route('register') }}">Register</a>
                     </li>
+                    @else
+
                     <li>
-                        <a href="{{ route('cart.index') }}">Cart</a>
+                        <a href="{{ route('account.index') }}">Account</a>
                     </li>
-                    <li>
-                        <a href="login.html" class="login-link">Log In</a>
-                    </li>
+
+                    <div>
+                        <li>
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault();
+                                document.getElementById('logout-form').submit();">Logout</a>
+                        </li>
+
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </div>
+                    @endguest
+
+
                 </ul>
             </div>
             <!-- End .header-menu -->
@@ -40,11 +55,13 @@
                 <ul>
                     <li>
                         <a href="{{ route('home', ['locale' => 'en']) }}">
+                            <i class="flag-us flag"></i>
                             <span>ENG</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('home', ['locale' => 'vi']) }}">
+                            <i class="flag-vn flag"></i>
                             <span>VI</span>
                         </a>
                     </li>

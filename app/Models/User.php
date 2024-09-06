@@ -60,14 +60,8 @@ class User extends Authenticatable
         return $this->hasMany(UserAddresses::class);
     }
 
-    public function getmakePhoneAttribute()
+    public function socials()
     {
-        $phone = $this->phone;
-
-        if (strlen($phone) >= 4) {
-            return substr($phone, 0, -4) . '****';
-        }
-
-        return $phone;
+        return $this->hasMany(UserSocial::class);
     }
 }

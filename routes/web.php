@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginSocialController;
 use App\Http\Controllers\Client\AboutController;
 use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\CartController;
@@ -35,11 +36,18 @@ Route::get('/contact',                      [ContactController::class, 'index'])
 Route::get('/policy',                       [PolicyController::class, 'index'])->name('policy');
 
 Route::get('/wishlist',                     [WishlistController::class, 'wishlist'])->name('wishlist.index');
-Route::get('/account',                      [AccountController::class, 'index'])->name('account.index');
 Route::get('/cart',                         [CartController::class, 'index'])->name('cart.index');
 Route::get('/check-out',                    [CheckOutController::class, 'index'])->name('check-out');
 
 
+// middleware route
+Route::middleware(['auth'])->group(function () {
+    Route::get('/account',                  [AccountController::class, 'index'])->name('account.index');
+});
+
+// auth route
+Route::get('/auth/redirect/{social}', [LoginSocialController::class, 'redirect'])->name('social.redirect');
+Route::get('/auth/callback/{social}', [LoginSocialController::class, 'callback'])->name('social.callback');
 
 Auth::routes();
 

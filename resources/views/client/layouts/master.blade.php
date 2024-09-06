@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{{-- lang="{{ str_replace('_', '-', app()->getLocale()) }}" --}}
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +10,8 @@
     <meta name="keywords" content="LuxChill Ecommerce" />
     <meta name="description" content="Website Ecommerce by LuxChill">
     <meta name="author" content="LuxChill">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- css all --}}
     @include('client.layouts.partials.css')

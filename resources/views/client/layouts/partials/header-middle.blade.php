@@ -54,12 +54,18 @@
         </div>
 
         {{-- Login --}}
-        <a href="login.html" class="header-icon" title="login">
+
+        @guest
+        <a href="{{ route('login') }}" class="header-icon" title="Login">
             <i class="icon-user-2"></i>
         </a>
+        @else
+        <a href="{{ route('account.index') }}" class="header-icon" title="{{ Auth::user()->name }}">
+            <i class="icon-user-2"></i>
+        </a>
+        @endguest
 
-
-        <a href="{{ route('wishlist.index') }}" class="header-icon" title="wishlist">
+        <a href="{{ route('wishlist.index') }}" class="header-icon" title="Wishlist">
             <i class="icon-wishlist-2"></i>
         </a>
 
