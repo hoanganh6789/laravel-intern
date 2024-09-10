@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helper\Toastr;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\Alert;
-use App\Http\Helpers\Toastr;
 use App\Models\User;
 use App\Models\UserSocial;
 use Illuminate\Http\Request;
@@ -27,37 +27,55 @@ class LoginSocialController extends Controller
         try {
             $providerUser = Socialite::driver($social)->user();
 
-            $userSocial = UserSocial::query()
-                ->firstOrNew([
-                    'provider' => $social,
-                    'provider_id' =>  $providerUser->getId()
-                ]);
+            $userSocial = $this->findOrNewUserSocial($social, $providerUser);
 
             if ($userSocial->exists && $userSocial->user) {
-                Auth::login($userSocial->user);
-                Toastr::showToastr()->addSuccess(null, self::SUCCESS_MESSAGE);
-                return redirect()->route('home');
+                return $this->handleLogin($userSocial->user);
             }
 
-            $user = User::query()
-                ->firstOrCreate(
-                    ['email' => $providerUser->getEmail()],
-                    [
-                        'name' => $providerUser->getName(),
-                        'email' => $providerUser->getEmail()
-                    ]
-                );
+            $user = $this->findOrCreateUser($providerUser);
 
             $userSocial->user()->associate($user);
             $userSocial->save();
 
-            Auth::login($user);
-            Toastr::showToastr()->addSuccess(null, self::SUCCESS_MESSAGE);
-            return redirect()->route('home');
+            Toastr::success(null, self::SUCCESS_MESSAGE);
+            return $this->handleLogin($user);
         } catch (\Throwable $th) {
-            Toastr::showToastr()->addError('', self::ERROR_MESSAGE);
+            Toastr::error(null, self::ERROR_MESSAGE);
             Log::error($th->getMessage());
             return redirect()->route('login');
         }
+    }
+
+    private function findOrNewUserSocial($social, $provider)
+    {
+        return UserSocial::query()
+            ->firstOrNew([
+                'provider' => $social,
+                'provider_id' =>  $provider->getId()
+            ]);
+    }
+
+    private function findOrCreateUser($providerUser)
+    {
+        return User::query()
+            ->firstOrCreate(
+                ['email' => $providerUser->getEmail()],
+                [
+                    'name' => $providerUser->getName(),
+                    'email' => $providerUser->getEmail()
+                ]
+            );
+    }
+
+    private function handleLogin($user)
+    {
+        Auth::login($user);
+
+        $redirectRoute = $user->isAdmin() ? 'admin.dashboard' : 'home';
+
+        Toastr::success(null, self::SUCCESS_MESSAGE);
+
+        return redirect()->route($redirectRoute);
     }
 }

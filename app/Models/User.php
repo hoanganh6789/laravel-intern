@@ -64,4 +64,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserSocial::class);
     }
+
+    // check admin
+
+    public function isAdmin()
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
 }

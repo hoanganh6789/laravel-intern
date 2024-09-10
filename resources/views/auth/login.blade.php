@@ -21,6 +21,7 @@
 
 
 <div class="container login-container">
+
     <div class="row">
         <div class="col-lg-12 mx-auto">
             <div class="d-flex justify-content-center align-items-center">
@@ -33,7 +34,8 @@
                                 Email
                                 <span class="required">*</span>
                             </label>
-                            <input type="email" class="form-input form-wide" id="login-email" name="email" required />
+                            <input type="email" class="form-input form-wide" id="login-email" name="email"
+                                value="{{ old('email') }}" required />
 
                             @error('email')
                             <div class="text-danger fst-italic">
@@ -49,12 +51,13 @@
                                 <span class="required">*</span>
                             </label>
                             <input type="password" class="form-input form-wide @error('password') is-invalid @enderror"
-                                id="login-password" required name="password" />
+                                id="login-password" name="password" value="{{ old('password') }}" required />
 
                             @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
+                            <div class="text-danger fst-italic">
+                                <span class="required">*</span>
+                                {{ $message }}
+                            </div>
                             @enderror
                         </div>
 
@@ -84,6 +87,12 @@
                             <a href="forgot-password.html" class="forget-password text-dark form-footer-right">Forgot
                                 Password?</a>
                         </div>
+
+
+                        <div class="mb-3">
+                            <a href="{{ route('register') }}" class="text-black-50 fs-3">Register</a>
+                        </div>
+
                         <button type="submit" class="btn btn-dark btn-md w-100">
                             LOGIN
                         </button>

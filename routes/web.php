@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LoginSocialController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Client\AboutController;
 use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\CartController;
@@ -49,6 +51,19 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/auth/redirect/{social}', [LoginSocialController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/callback/{social}', [LoginSocialController::class, 'callback'])->name('social.callback');
 
-Auth::routes();
+Auth::routes([
+    'login' => false,
+    'register' => false,
+    // 'verify' => true
+]);
+
+// Custom login - register
+Route::get('/login', [LoginController::class, 'showFormLogin'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+
+Route::get('/register', [RegisterController::class, 'showFormRegister'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
+
+
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
