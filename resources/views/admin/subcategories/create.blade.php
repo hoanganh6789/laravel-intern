@@ -1,15 +1,15 @@
 @extends('admin.layouts.master')
-@section('title', 'New Category')
+@section('title', 'Create SubCategory')
 @section('content')
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Create Category</h4>
+            <h4 class="mb-sm-0 font-size-18">Create SubCategory</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item">
-                        <a href="{{ route('admin.categories.index') }}">Categories</a>
+                        <a href="{{ route('admin.sub-categories.index') }}">SubCategory</a>
                     </li>
                     <li class="breadcrumb-item active">Create New</li>
                 </ol>
@@ -17,19 +17,31 @@
         </div>
 
 
-        <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.sub-categories.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
                         <div class="card-body">
+
+                            <div class="mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" name="category_id">
+                                    @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}" {{ $loop->first ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             <div class="mb-3">
                                 <label for="projectname-input" class="form-label">Name</label>
                                 <input id="projectname-input" name="name" type="text" class="form-control"
                                     placeholder="Enter category name..." value="{{ old('name') }}" required>
                                 @error('name')
                                 <div class="text-danger fst-italic">
-                                    * {{ $message }}
+                                    *{{ $message }}
                                 </div>
                                 @enderror
                             </div>

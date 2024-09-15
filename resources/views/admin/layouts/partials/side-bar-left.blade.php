@@ -57,15 +57,24 @@
 
             <li class="menu-title" key="t-administration">Administration</li>
 
-            <li>
-                <a href="{{ route('admin.categories.index') }}" class="waves-effect">
+            <li class="{{ activeMenuLi('admin/categories') }}">
+                <a href="{{ route('admin.categories.index') }}"
+                    class="waves-effect {{ activeMenu('admin/categories') }}">
                     <i class="bx bx-receipt"></i>
                     <span key="t-categories">Categories</span>
                 </a>
             </li>
 
-            <li>
-                <a href="{{ route('admin.users.index') }}" class="waves-effect">
+            <li class="{{ activeMenuLi('admin/sub-categories') }}">
+                <a href="{{ route('admin.sub-categories.index') }}"
+                    class="waves-effect {{ activeMenu('admin/sub-categories') }}">
+                    <i class="bx bx-receipt"></i>
+                    <span key="t-categories">SubCategories</span>
+                </a>
+            </li>
+
+            <li class="{{ activeMenuLi('admin/users') }}">
+                <a href="{{ route('admin.users.index') }}" class="waves-effect {{ activeMenu('admin/users') }}">
                     <i class="bx bx-user"></i>
                     <span key="t-users">Users</span>
                 </a>

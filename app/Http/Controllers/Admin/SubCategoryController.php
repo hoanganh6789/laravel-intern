@@ -5,32 +5,29 @@ namespace App\Http\Controllers\Admin;
 use App\Helper\Alert;
 use App\Helper\Toastr;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Requests\StoreSubCategoryRequest;
+use App\Http\Requests\UpdateSubCategoryRequest;
 use App\Models\Category;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class CategoryController extends Controller
+
+class SubCategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
-
-    private const PATH_VIEW = 'admin.categories.';
+    private const PATH_VIEW = 'admin.subcategories.';
     public function index()
     {
 
-        $categories = Category::query()
+        $subCategories = SubCategory::query()
             ->latest()->paginate(10);
 
-        if ($categories->currentPage() > $categories->lastPage()) {
-            return redirect()->route('admin.categories.index', parameters: ['page' => $categories->lastPage()]);
+        if ($subCategories->currentPage() > $subCategories->lastPage()) {
+            return redirect()->route('admin.sub-categories.index', parameters: ['page' => $subCategories->lastPage()]);
         }
 
-        return view(self::PATH_VIEW . __FUNCTION__, compact('categories'));
+        return view(self::PATH_VIEW . __FUNCTION__, compact('subCategories'));
     }
 
     /**
@@ -38,13 +35,18 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view(self::PATH_VIEW . __FUNCTION__);
+        $categories = Category::query()
+            ->latest()
+            ->get();
+
+
+        return view(self::PATH_VIEW . __FUNCTION__, compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreSubCategoryRequest $request)
     {
 
         $data = $request->except(['status', 'is_active']);
@@ -52,12 +54,10 @@ class CategoryController extends Controller
         $data['is_active'] = $request->boolean('is_active', false);
         $data['slug'] = Str::slug($request->name, '-') . '-' .  time();
 
-        Category::create($data);
+        SubCategory::create($data);
 
         Toastr::success(null, 'Thao tác thành công');
-        return redirect()->route('admin.categories.index');
-
-        // dd($request->all());
+        return redirect()->route('admin.sub-categories.index');
     }
 
     /**
@@ -71,44 +71,45 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(SubCategory $subCategory)
     {
-        return view(self::PATH_VIEW . __FUNCTION__, compact('category'));
+        $categories = Category::query()
+            ->latest()
+            ->get();
+
+        return view(self::PATH_VIEW . __FUNCTION__, compact(['subCategory', 'categories']));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateSubCategoryRequest $request, SubCategory $subCategory)
     {
         $data = $request->except(['status', 'is_active']);
         $data['status'] = $request->boolean('status', false);
         $data['is_active'] = $request->boolean('is_active', false);
         $data['slug'] = Str::slug($request->name, '-') . '-' .  time();
 
-        $category->update($data);
+        $subCategory->update($data);
 
         Toastr::success(null, 'Thao tác thành công');
         return redirect()->back();
-
-        // dd($request->all());
-
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(SubCategory $subCategory)
     {
 
         try {
 
-            if ($category) {
-                $category->delete();
+            if ($subCategory) {
+                $subCategory->delete();
             }
 
-            Alert::success("Bạn đã xóa thành công category:  {$category->name}", 'Thông Báo');
-            return redirect()->route('admin.categories.index');
+            Alert::success("Bạn đã xóa thành công Sub Category:  {$subCategory->name}", 'Thông Báo');
+            return redirect()->route('admin.sub-categories.index');
         } catch (\Throwable $th) {
             //throw $th;
             Alert::success("Có lỗi xảy ra. Check log", 'Thông Báo');

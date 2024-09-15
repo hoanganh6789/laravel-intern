@@ -1,16 +1,16 @@
 <div class="container">
     <nav class="main-nav w-100">
         <ul class="menu">
-            <li class="active">
+            <li class="{{ activeMenu('/') }}">
                 <a href="{{ route('home') }}">Home</a>
             </li>
-            <li>
+            <li class="{{ activeMenu('shop') }}">
                 <a href="{{ route('shop.index') }}">Shop</a>
             </li>
-            <li>
+            <li class="{{ activeMenu('about') }}">
                 <a href="{{ route('about') }}">About</a>
             </li>
-            <li>
+            <li class="{{ activeMenu('contact') }}">
                 <a href="{{ route('contact') }}">Contact</a>
             </li>
             <li>
@@ -68,7 +68,7 @@
                 </div>
                 <!-- End .megamenu -->
             </li>
-            <li><a href="blog.html">Blog</a></li>
+
             <li class="float-right">
                 <a href="{{ route('policy') }}" rel="noopener" class="pl-5" target="_blank">
                     Policy!

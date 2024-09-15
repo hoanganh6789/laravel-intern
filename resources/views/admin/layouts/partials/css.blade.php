@@ -20,3 +20,5 @@
 <script src="{{ asset('assets/theme/admin/js/plugin.js') }}"></script>
 <!-- Sweetalert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- Fontawesome --}}
+<script src="https://kit.fontawesome.com/12ffb45aae.js" crossorigin="anonymous"></script>

@@ -26,6 +26,11 @@ class UserController extends Controller
     public function index()
     {
         $users = User::query()->latest('id')->paginate(10);
+
+        if ($users->currentPage() > $users->lastPage()) {
+            return redirect()->route('admin.users.index', parameters: ['page' => $users->lastPage()]);
+        }
+
         return view(self::VIEW_PATH . __FUNCTION__, compact('users'));
     }
 
