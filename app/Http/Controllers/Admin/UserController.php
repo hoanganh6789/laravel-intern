@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Helpers\Alert;
-use App\Http\Helpers\Toastr;
+use App\Helper\Alert;
+use App\Helper\Toastr;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
@@ -27,11 +27,15 @@ class UserController extends Controller
     {
         $users = User::query()->latest('id')->paginate(10);
 
+        $trashs = User::query()->onlyTrashed()->latest('id')->paginate(10);
+
+        // dd($trashs->toArray());
+
         if ($users->currentPage() > $users->lastPage()) {
             return redirect()->route('admin.users.index', parameters: ['page' => $users->lastPage()]);
         }
 
-        return view(self::VIEW_PATH . __FUNCTION__, compact('users'));
+        return view(self::VIEW_PATH . __FUNCTION__, compact(['users', 'trashs']));
     }
 
     /**
@@ -66,10 +70,10 @@ class UserController extends Controller
                 $address = UserAddresses::create($dataAddress);
             }, 3);
 
-            Toastr::showToastr()->addSuccess('', 'Thêm user thành công');
+            Toastr::success(null, 'Thêm user thành công');
             return redirect()->route('admin.users.index');
         } catch (\Throwable $th) {
-            Alert::showAlert()->addError('', $th->getMessage());
+            Alert::error(null, $th->getMessage());
             Log::error($th->getMessage());
 
             if (Storage::exists($image)) {
@@ -116,10 +120,10 @@ class UserController extends Controller
             if ($request->hasFile('user.avatar') && Storage::exists($imageOld)) {
                 Storage::delete($imageOld);
             }
-            Toastr::showToastr()->addSuccess(null, 'Cập nhật user thành công');
+            Toastr::success(null, 'Cập nhật user thành công');
             return redirect()->back();
         } catch (\Throwable $th) {
-            Alert::showAlert()->addError($th->getMessage());
+            Alert::error(null, $th->getMessage());
             Log::error($th->getMessage());
         }
     }
@@ -130,9 +134,43 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if ($user) {
+            $user->addresses->delete();
             $user->delete();
-            Alert::showAlert()->addSuccess("Xóa user: {$user->name} thành công", 'Thao tác thành công');
+            Alert::success("Xóa user: {$user->name} thành công", 'Thao tác thành công');
             return redirect()->back();
         }
+    }
+
+    public function trashs(string $id)
+    {
+
+        try {
+            DB::transaction(function () use ($id) {
+                $user = User::withTrashed()
+                    ->findOrFail($id);
+
+                if ($user) {
+                    $user->addresses->forceDelete();
+                    $user->forceDelete();
+                }
+
+                Alert::success("Xóa user: {$user->name} thành công", 'Thao tác thành công');
+                return redirect()->back();
+            });
+        } catch (\Throwable $th) {
+            Alert::error('Đã có lỗi xảy ra', 'Xóa user thất bại.');
+            Log::error($th->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    public function handleActiveMenu(Request $request)
+    {
+
+        if ($request->has('tab')) {
+            return 'active';
+        }
+
+        return '';
     }
 }
