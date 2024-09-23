@@ -80,14 +80,14 @@
                 </a>
             </li>
 
-            <li>
+            <li class="{{ activeMenuLi('admin/products') }}">
                 <a href="{{ route('admin.products.index') }}" class="waves-effect">
                     <i class="bx bx-receipt"></i>
                     <span key="t-products">Products</span>
                 </a>
             </li>
 
-            <li>
+            <li class="{{ activeMenuLi('admin/comments') }}">
                 <a href="{{ route('admin.comments.index') }}" class="waves-effect">
                     <i class="bx bx-receipt"></i>
                     <span key="t-comments">Comments</span>

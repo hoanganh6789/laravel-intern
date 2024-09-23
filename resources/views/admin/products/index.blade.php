@@ -21,7 +21,28 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h1>Hello</h1>
+                <div class="row mb-2">
+                    <div class="col-sm-4">
+                        <div class="search-box me-2 mb-2 d-inline-block">
+                            <div class="position-relative">
+                                <input type="text" class="form-control" id="searchTableList" placeholder="Search...">
+                                <i class="bx bx-search-alt search-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="text-sm-end">
+                            <a href="{{ route('admin.products.create') }}"
+                                class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2 addCustomers-modal">
+                                <i class="mdi mdi-plus me-1"></i>
+                                New Product
+                            </a>
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+
+
                 {{-- <div class="row mb-2">
                     <div class="col-sm-4">
                         <div class="search-box me-2 mb-2 d-inline-block">

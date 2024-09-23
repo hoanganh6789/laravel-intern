@@ -45,10 +45,7 @@
 
     <div class="rightbar-overlay"></div>
 
-    <script>
-        const BASE_URL = "{{ env('APP_URL') }}"
-    </script>
-    
+    @include('admin.layouts.partials.config')
     @include('admin.layouts.partials.script')
     @yield('script')
 </body>

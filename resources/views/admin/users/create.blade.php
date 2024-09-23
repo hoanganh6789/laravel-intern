@@ -174,7 +174,7 @@
                                 </select>
                             </div>
 
-                            <div>
+                            <div class="mb-3">
                                 <div class="form-check form-switch mb-3">
                                     <label class="form-check-label">is_active</label>
                                     <input class="form-check-input" type="checkbox" checked="" name="user[is_active]">
