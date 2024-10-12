@@ -18,8 +18,8 @@ class Category extends Model
         "is_active",
     ];
 
-    public function subcategory()
-    {
-        return $this->hasOne(SubCategory::class);
-    }
+    // public function subcategory()
+    // {
+    //     return $this->hasOne(SubCategory::class);
+    // }
 }

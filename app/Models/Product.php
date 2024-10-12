@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'category_id',
@@ -36,24 +37,23 @@ class Product extends Model
         'is_show_home' => 'boolean',
     ];
 
+    protected $attributes = [
+        'is_active' => 0,
+        'is_hot_deal' => 0,
+        'is_good_deal' => 0,
+        'is_new' => 0,
+        'is_show_home' => 0,
+    ];
+
+
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class);
-    }
-
-    public function subCategoy()
+    public function subCategory()
     {
         return $this->belongsTo(SubCategory::class);
-    }
-
-    public function subCategories()
-    {
-        return $this->belongsToMany(SubCategory::class);
     }
 
     public function tags()
@@ -63,10 +63,11 @@ class Product extends Model
 
     public function galleries()
     {
-        return $this->belongsToMany(ProductGallery::class);
+        return $this->hasMany(ProductGallery::class);
     }
 
-    public function variants(){
-        return $this->belongsToMany(ProductVariant::class);
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
     }
 }

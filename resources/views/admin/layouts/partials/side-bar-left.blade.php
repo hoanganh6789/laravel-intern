@@ -136,19 +136,33 @@
 
 
             <li>
-                <a href="chat.html" class="waves-effect">
-                    <i class="bx bx-chat"></i>
-                    <span key="t-chat">Chat</span>
+                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <i class="bx bx-share-alt"></i>
+                    <span key="t-multi-level">Products</span>
                 </a>
+                <ul class="sub-menu" aria-expanded="true">
+                    <li>
+                        <a href="{{ route('admin.products.index') }}" key="t-level-1-1">
+                            Danh Sách Sản Phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Biến Thể</a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="{{ route('admin.product-colors.index') }}" key="t-level-2-1">Colors</a></li>
+                            <li><a href="{{ route('admin.product-sizes.index') }}" key="t-level-2-2">Sizes</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </li>
 
             <li>
                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                     <i class="bx bx-map"></i>
-                    <span key="t-maps">Maps</span>
+                    <span key="t-maps">Products</span>
                 </a>
                 <ul class="sub-menu" aria-expanded="false">
-                    <li><a href="maps-google.html" key="t-g-maps">Google Maps</a></li>
+                    <li><a href="maps-google.html" key="t-g-maps">Colors</a></li>
                     <li><a href="maps-vector.html" key="t-v-maps">Vector Maps</a></li>
                     <li><a href="maps-leaflet.html" key="t-l-maps">Leaflet Maps</a></li>
                 </ul>

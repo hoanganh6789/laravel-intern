@@ -19,19 +19,20 @@ return new class extends Migration
             $table->foreignIdFor(SubCategory::class)->constrained();
 
             $table->string('name', 255);
-            $table->string('slug', 190)->unique()->nullable();
-            $table->string('sku', 190)->unique();
-            $table->string('thumb_image', length: 500)->nullable();
+            $table->string('slug', 255)->unique();
+            $table->string('sku', 255)->unique();
+            $table->string('thumb_image', 500)->nullable();
             $table->double('price_regular');
             $table->double('price_sale')->nullable();
             $table->text('description')->nullable();
             $table->text('content')->nullable();
             $table->unsignedBigInteger('views')->default(0);
             $table->boolean('is_active')->default(true);
-            $table->boolean('is_hot_deal')->default(true);
-            $table->boolean('is_good_deal')->default(true);
-            $table->boolean('is_new')->default(true);
-            $table->boolean('is_show_home')->default(true);
+            $table->boolean('is_hot_deal')->default(false);
+            $table->boolean('is_good_deal')->default(false);
+            $table->boolean('is_new')->default(false);
+            $table->boolean('is_show_home')->default(false);
+            $table->softDeletes();
 
             $table->timestamps();
         });

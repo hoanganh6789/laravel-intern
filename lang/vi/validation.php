@@ -154,7 +154,7 @@ return [
         'username'              => 'tên đăng nhập',
         'year'                  => 'năm',
 
-        //
+        // USER
         'user.name'             => 'tên',
         'user.email'            => 'email',
         'user.password'         => 'mật khẩu',
@@ -163,6 +163,16 @@ return [
         'address.address'       => 'đia chỉ',
         'address.city'          => 'thành phố',
         'address.district'      => 'quận/huyện',
-        'address.ward'          => 'phường/xã'
+        'address.ward'          => 'phường/xã',
+
+        // PRODUCT
+        'product.name' => 'name',
+        'product.slug' => 'slug',
+        'product.sku' => 'sku',
+        'product.thumb_image' => 'thumb_image',
+        'product.price_regular' => 'price regular',
+        'product.price_sale' => 'price sale',
+        'product.description' => 'description',
+        'product.content' => 'content',
     ],
 ];

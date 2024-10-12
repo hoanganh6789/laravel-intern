@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Helper\Toastr;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductColor;
+use App\Models\ProductGallery;
 use App\Models\ProductSize;
 use App\Models\ProductVariant;
 use App\Models\SubCategory;
@@ -25,7 +27,10 @@ class ProductController extends Controller
     private const VIEW_PATH = 'admin.products.';
     public function index()
     {
-        return view(self::VIEW_PATH . __FUNCTION__);
+
+        $products = Product::query()->with(['category', 'subCategory', 'tags'])->latest('id')->paginate();
+
+        return view(self::VIEW_PATH . __FUNCTION__, compact('products'));
     }
 
     /**
@@ -38,84 +43,56 @@ class ProductController extends Controller
         $subCategories = SubCategory::query()->latest()->get();
         $colors = ProductColor::query()->latest()->get();
         $sizes = ProductSize::query()->latest()->get();
+        $tags = Tag::query()->latest('id')->get();
 
-        return view(self::VIEW_PATH . __FUNCTION__, compact(['categories', 'subCategories', 'tags', 'colors', 'sizes']));
+        return view(self::VIEW_PATH . __FUNCTION__, compact(['categories', 'subCategories', 'tags', 'colors', 'sizes', 'tags']));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
+        [$dataProduct, $dataProductVariants, $dataProductTags, $dataProductGalleries] = $this->handleData($request);
         try {
-            $images = [];
-            // handle products, product_colors, product_galleries, product_sizes, product_tags, product_variants
 
-            DB::transaction(function () use ($request, &$images) {
-                $product = $request->product;
+            DB::beginTransaction();
 
-                $product['is_active'] = $request->boolean('product.is_active', false);
-                $product['is_hot_deal'] = $request->boolean('product.is_hot_deal', false);
-                $product['is_good_deal'] = $request->boolean('product.is_good_deal', false);
-                $product['is_new'] = $request->boolean('product.is_new', false);
-                $product['is_show_home'] = $request->boolean('product.is_show_home', false);
-                $product['slug'] = Str::slug($product['name'], '-') . '-' .  time();
-                $product['sku'] =  'SKU-' . Str::uuid();;
+            $product = Product::query()->create($dataProduct);
 
+            foreach ($dataProductVariants as $item) {
+                $item += ['product_id' => $product->id];
+                ProductVariant::query()->create($item);
+            }
 
-                if ($request->hasFile('product.thumb_image')) {
-                    $product['thumb_image'] = Storage::put('products', $request->file('product.thumb_image'));
-                }
+            $product->tags()->attach($dataProductTags);
 
-                // dd($product);
+            foreach ($dataProductGalleries as $item) {
+                $item += ['product_id' => $product->id];
+                ProductGallery::create($item);
+            }
 
-                $newProduct = Product::create($product);
+            DB::commit();
 
-                // if ($request->has('product.images')) {
-                //     $product['image'] = 'image new';
-                // }
-
-                // if ($request->product_colors && $request->product_sizes) {
-                //     foreach ($request->product_colors as $color) {
-                //         // ProductColor::create($color);
-                //         // echo $color . "<br/>";
-                //         $productColor = [
-                //             'product_id' => $newProduct->id,
-                //             'color' => $color['name']
-                //         ];
-                //         // ProductVariant::create();
-                //     }
-
-                //     foreach ($request->product_sizes as $size) {
-                //         $productSize = [];
-                //     }
-                // }
-
-
-
-                // if ($request->has('tags')) {
-                //     Tag::query()->create($request->tags);
-                //     // Tag::query()->create($request->tags);
-                // }
-
-
-                // ProductVariant::create([
-                //     'product_id' => $newProduct->id,
-                //     'color_id' => $productColor->id,
-                //     'size_id' => $productSize->id,
-                //     'sku' => 'VAR-' . Str::uuid(),  // SKU duy nhất cho mỗi variant
-                //     'price' => $size['price'], // Giá có thể khác nhau cho mỗi variant
-                //     'quantity' => $size['quantity'] // Số lượng tồn kho cho từng variant
-                // ]);
-            });
-
-            Toastr::success(null, 'Thao tác thành công');
+            Toastr::success(null, "Thêm sản phẩm thành công");
             return redirect()->route('admin.products.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
 
-            // dd($request->all());
-        } catch (\Throwable $th) {
+            if (!empty($dataProduct['thumb_image']) && Storage::exists($dataProduct['thumb_image'])) {
+                Storage::delete($dataProduct['thumb_image']);
+            };
+
+            $dataHasImage = $dataProductVariants + $dataProductGalleries;
+
+            foreach ($dataHasImage as $item) {
+                if (!empty($item['image']) && Storage::exists($item['image'])) {
+                    Storage::delete($item['image']);
+                }
+            }
+
             Toastr::error(null, 'Đã xảy ra lỗi');
-            Log::error($th->getMessage());
+            Log::error($e->getMessage());
             return redirect()->back();
         }
     }
@@ -123,17 +100,18 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Product $product)
     {
-        return view(self::VIEW_PATH . __FUNCTION__);
+        return view(self::VIEW_PATH . __FUNCTION__, compact('product'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Product $product)
     {
-        return view(self::VIEW_PATH . __FUNCTION__);
+        $product->load(['']);
+        return view(self::VIEW_PATH . __FUNCTION__, compact('product'));
     }
 
     /**
@@ -152,10 +130,56 @@ class ProductController extends Controller
         //
     }
 
-    public function handleData(Request $request)
+    private function handleData(Request $request)
     {
-        $dataProduct = $request->except(['product_variants', 'tags', 'product_galleries']);
+        $dataProduct = $request->product;
 
-        dd($dataProduct);
+        $dataProduct['is_active'] ??= 0;
+        $dataProduct['is_hot_deal'] ??= 0;
+        $dataProduct['is_good_deal'] ??= 0;
+        $dataProduct['is_new'] ??= 0;
+        $dataProduct['is_show_home'] ??= 0;
+
+
+        $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . Str::ulid();
+
+        if ($request->hasFile('product.thumb_image')) {
+            $dataProduct['thumb_image'] = Storage::put('products', $dataProduct['thumb_image']);
+        }
+
+        $dataProductVariantsTmp = $request->product_variants;
+        $dataProductVariants = [];
+
+        foreach ($dataProductVariantsTmp as $key => $item) {
+            $tmp = explode('-', $key);
+
+            $dataProductVariants[] = [
+                'product_color_id' => $tmp[0],
+                'product_size_id' => $tmp[1],
+                'quantity' => $item['quantity'],
+                'image' => !empty($item['image']) ? Storage::put('product_variants', $item['image']) : null
+            ];
+        }
+
+
+        // handle product galleries
+
+        $dataProductGalleriesTmp = $request->product_galleries ?: [];
+        $dataProductGalleries = [];
+
+        foreach ($dataProductGalleriesTmp as $image) {
+            if (!empty($image)) {
+                $dataProductGalleries[] = [
+                    'image' => Storage::put('product_galleries', $image)
+                ];
+            }
+        }
+
+
+        // end product galleries
+
+        $dataProductTags = $request->tags;
+
+        return [$dataProduct, $dataProductVariants, $dataProductTags, $dataProductGalleries];
     }
 }

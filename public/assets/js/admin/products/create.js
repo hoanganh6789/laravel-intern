@@ -1,11 +1,23 @@
 function previewImage(event) {
   const img = document.getElementById("projectlogo-img");
   img.src = URL.createObjectURL(event.target.files[0]);
+
+  $("#projectlogo-img").addClass("h-screen");
 }
 
 function initializeSelect2() {
   $("#select-tag-product-multiple").select2({
     placeholder: "Choose tags...",
+    allowClear: true,
+  });
+
+  $("#select-color-product-multiple").select2({
+    placeholder: "Choose color...",
+    allowClear: true,
+  });
+
+  $("#select-size-product-multiple").select2({
+    placeholder: "Choose size...",
     allowClear: true,
   });
 }
@@ -14,61 +26,43 @@ function fetchProductData() {
   return $.get(`${BASE_URL}/api/v1/products`);
 }
 
-function renderColorOptions(colors) {
-  return colors
-    .map((color) => `<option value="${color.id}">${color.name}</option>`)
+// handle variants 02/10/2024
+const renderOptions = (data) => {
+  return data
+    .map((option) => `<option value=${option.id}>${option.name}</option>`)
     .join(" ");
-}
+};
 
-function renderSizeOptions(sizes) {
-  return sizes
-    .map((size) => `<option value=${size.id}>${size.name}</option>`)
-    .join(" ");
-}
+const renderTableVariants = (selectedColors, selectedSizes) => {
+  let tableRows = "";
 
-function addColor(colors) {
-  $("#color-name-product").show();
+  selectedColors.forEach((color, colorIndex) => {
+    selectedSizes.forEach((size, sizeIndex) => {
+      tableRows += `<tr class="text-center">
+                ${
+                  sizeIndex === 0
+                    ? `<td rowspan="${selectedSizes.length}" style="vertical-align: middle;">${color.text}</td>`
+                    : ""
+                }
+                <td>${size.text}</td>
+                <td>
+                <input type="tel" name="product_variants[${color.id}-${
+        size.id
+      }][quantity]"
+                min="1" class="form-control quantity-variant-all"></td>
+                <td>
+                <input type="file" name="product_variants[${color.id}-${
+        size.id
+      }][image]" class="form-control-file">
+                </td>
+            </tr>`;
+    });
+  });
 
-  const renderColor = `
-      <div class="col-lg-4 mb-3 d-flex gap-1">
-        <select name="product_colors[]" class="form-select w-75">
-          ${renderColorOptions(colors)}
-        </select>
-        <button class="btn btn-danger delete-product-color">
-          <i class="fa-regular fa-trash-can"></i>
-        </button>
-      </div>
-    `;
+  return tableRows;
+};
 
-  $("#render-product-color").append(renderColor);
-}
-
-function addSize(sizes) {
-  $("#size-name-product").show();
-
-  const renderSize = `
-      <div class="col-lg-4 mb-3 d-flex gap-1">
-        <select name="product_sizes[]" class="form-select w-75">
-          ${renderSizeOptions(sizes)}
-        </select>
-        <button class="btn btn-danger delete-product-size">
-          <i class="fa-regular fa-trash-can"></i>
-        </button>
-      </div>
-    `;
-
-  $("#render-product-size").append(renderSize);
-}
-
-function handleDelete() {
-  $(document).on(
-    "click",
-    ".delete-product-color, .delete-product-size",
-    function () {
-      $(this).closest("div").remove();
-    }
-  );
-}
+// End
 
 $(document).ready(function () {
   let colors = [];
@@ -82,21 +76,100 @@ $(document).ready(function () {
   fetchProductData().done(function (res) {
     colors = res.data.productColors;
     sizes = res.data.productSizes;
+
+    // ------- \\
+    $("#select-color-product-multiple").html(`${renderOptions(colors)}`);
+    $("#select-size-product-multiple").html(`${renderOptions(sizes)}`);
+    // ------- \\
   });
 
-  $("#product-btn-add-color").click(function () {
-    addColor(colors);
+  // ------- \\
+
+  // mặc định hide table product variant preview
+  $("#table-product-variant-preview").hide();
+
+  // lắng nghe sự kiện chọn color, size
+  $("#select-color-product-multiple, #select-size-product-multiple").on(
+    "change",
+    function () {
+      const selectedColors = $("#select-color-product-multiple").select2(
+        "data"
+      );
+      const selectedSizes = $("#select-size-product-multiple").select2("data");
+
+      // Kiểm tra nếu cả màu và size đều được chọn
+      if (selectedColors.length > 0 && selectedSizes.length > 0) {
+        // khi chọn cả color và size thì mới hiển thị table
+        $("#table-product-variant-preview").show();
+
+        const tableBody = renderTableVariants(selectedColors, selectedSizes);
+        $("#render-tbody-product").html(tableBody);
+      } else {
+        $("#render-tbody-product").empty(); // Xóa bảng nếu không có gì được chọn
+      }
+    }
+  );
+
+  $("#apply-quantity-variant-all").on("click", function () {
+    let quantityAll = $("#product-quantity-variant-all").val();
+
+    if (quantityAll !== "" && !isNaN(quantityAll) && quantityAll >= 1) {
+      $(".quantity-variant-all").val(quantityAll);
+      console.log("upload all");
+    } else {
+      showAlert("error", "Yêu cầu nhập số hợp lệ", "LuxChill Thông Báo!");
+    }
+
+    // console.log(`Quantity All: ${quantityAll}`);
   });
 
-  $("#product-btn-add-size").click(function () {
-    addSize(sizes);
-  });
+  // ------- \\
 
+  handleSubmit();
+});
+
+const addImageGallery = () => {
+  let id =
+    "gen" + "_" + Math.random().toString(36).substring(2, 15).toLowerCase();
+  let html = `
+                <div class="col-md-4" id="${id}_item">
+                    <label for="${id}" class="form-label">Image</label>
+                    <div class="d-flex">
+                        <input type="file" class="form-control" name="product_galleries[]" id="${id}">
+                        <button type="button" class="btn btn-danger" onclick="removeImageGallery('${id}_item')">
+                            <span class="bx bx-trash"></span>
+                        </button>
+                    </div>
+                </div>
+  `;
+
+  $("#gallery_list").append(html);
+};
+
+const removeImageGallery = (id) => {
+  showAlertConfirmTrash(() => {
+    $(`#${id}`).remove();
+  });
+};
+
+const handleSubmit = () => {
   $("#submit-create-form-product").click(function () {
     $("#form-create-product").submit();
   });
+};
 
-  //   $("#render-tbody-product").click(function () {});
+const validateProductVariants = () => {
+  const selectedColors = $("#select-color-product-multiple").select2("data");
+  const selectedSizes = $("#select-size-product-multiple").select2("data");
 
-  handleDelete();
-});
+  // Kiểm tra nếu cả màu và size đều được chọn
+  if (selectedColors.length > 0 && selectedSizes.length > 0) {
+    // khi chọn cả color và size thì mới hiển thị table
+    $("#table-product-variant-preview").show();
+
+    const tableBody = renderTableVariants(selectedColors, selectedSizes);
+    $("#render-tbody-product").html(tableBody);
+  } else {
+    $("#render-tbody-product").empty(); // Xóa bảng nếu không có gì được chọn
+  }
+};
