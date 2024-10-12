@@ -8,26 +8,27 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
-
+    protected $categoryService;
     private const PATH_VIEW = 'admin.categories.';
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
     public function index()
     {
 
-        $categories = Category::query()
-            ->latest()->paginate(10);
+        $categories = $this->categoryService->all();
 
         if ($categories->currentPage() > $categories->lastPage()) {
-            return redirect()->route('admin.categories.index', parameters: ['page' => $categories->lastPage()]);
+            return redirect()->route('admin.categories.index', ['page' => $categories->lastPage()]);
         }
 
         return view(self::PATH_VIEW . __FUNCTION__, compact('categories'));
@@ -46,18 +47,10 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-
-        $data = $request->except(['status', 'is_active']);
-        $data['status'] = $request->boolean('status', false);
-        $data['is_active'] = $request->boolean('is_active', false);
-        $data['slug'] = Str::slug($request->name, '-') . '-' .  time();
-
-        Category::create($data);
+        $this->categoryService->store($request->all());
 
         Toastr::success(null, 'Thao tác thành công');
         return redirect()->route('admin.categories.index');
-
-        // dd($request->all());
     }
 
     /**
@@ -81,18 +74,10 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $data = $request->except(['status', 'is_active']);
-        $data['status'] = $request->boolean('status', false);
-        $data['is_active'] = $request->boolean('is_active', false);
-        $data['slug'] = Str::slug($request->name, '-') . '-' .  time();
-
-        $category->update($data);
+        $this->categoryService->update($category, $request->all());
 
         Toastr::success(null, 'Thao tác thành công');
         return redirect()->back();
-
-        // dd($request->all());
-
     }
 
     /**
@@ -102,7 +87,6 @@ class CategoryController extends Controller
     {
 
         try {
-
             if ($category) {
                 $category->delete();
             }

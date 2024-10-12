@@ -24,13 +24,9 @@ class SubCategory extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
     public function products()
     {
-        return $this->belongsToMany(Product::class);
-    }
-
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
+        return $this->hasMany(Product::class);
     }
 }

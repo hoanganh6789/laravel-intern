@@ -14,6 +14,7 @@ use App\Models\ProductSize;
 use App\Models\ProductVariant;
 use App\Models\SubCategory;
 use App\Models\Tag;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,15 +22,17 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $productService;
     private const VIEW_PATH = 'admin.products.';
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index()
     {
-
-        $products = Product::query()->with(['category', 'subCategory', 'tags'])->latest('id')->paginate();
-
+        $products = $this->productService->all();
         return view(self::VIEW_PATH . __FUNCTION__, compact('products'));
     }
 

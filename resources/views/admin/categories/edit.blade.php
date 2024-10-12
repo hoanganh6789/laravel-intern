@@ -19,8 +19,7 @@
         </div>
 
 
-        <form id="category-form-edit-{{ $category->id }}" action="{{ route('admin.categories.update', $category) }}"
-            method="POST" enctype="multipart/form-data">
+        <form id="category-form-edit-{{ $category->id }}" action="{{ route('admin.categories.update', $category) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="row">
@@ -29,8 +28,7 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <label for="projectname-input" class="form-label">Name</label>
-                                <input id="projectname-input" name="name" type="text" class="form-control"
-                                    placeholder="Enter category name..." value="{{ $category->name }}" required>
+                                <input id="projectname-input" name="name" type="text" class="form-control" placeholder="Enter category name..." value="{{ $category->name }}" required>
                                 @error('name')
                                 <div class="text-danger fst-italic">
                                     * {{ $message }}
@@ -40,9 +38,8 @@
 
 
                             <div class="mb-3">
-                                <label for="projectname-input" class="form-label">Name</label>
-                                <input id="projectname-input" name="slug" type="text" class="form-control"
-                                    placeholder="Enter category slug..." value="{{ $category->slug }}" required>
+                                <label for="projectname-input" class="form-label">Slug</label>
+                                <input id="projectname-input" name="slug" type="text" class="form-control" placeholder="Enter category slug..." value="{{ $category->slug }}" required>
                                 <div class="invalid-feedback">Please enter a project name.</div>
                             </div>
 
@@ -50,9 +47,8 @@
 
                             <div class="mb-3">
                                 <label for="projectname-input" class="form-label">Description</label>
-                                <textarea name="description" type="text" class="form-control"
-                                    placeholder="Enter category description..." required>
-                                    {{ $category->description }}
+                                <textarea name="description" type="text" class="form-control" placeholder="Enter category description..." required>
+                                {{ $category->description }}
                                 </textarea>
                                 <div class="invalid-feedback">Please enter a project name.</div>
                             </div>

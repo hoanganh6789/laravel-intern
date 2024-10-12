@@ -25,8 +25,7 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <label for="projectname-input" class="form-label">Name</label>
-                                <input id="projectname-input" name="name" type="text" class="form-control"
-                                    placeholder="Enter category name..." value="{{ old('name') }}" required>
+                                <input id="projectname-input" name="name" type="text" class="form-control" placeholder="Enter category name..." value="{{ old('name') }}" required>
                                 @error('name')
                                 <div class="text-danger fst-italic">
                                     * {{ $message }}
@@ -36,8 +35,7 @@
 
                             <div class="mb-3">
                                 <label for="projectname-input" class="form-label">Description</label>
-                                <textarea name="description" type="text" class="form-control"
-                                    placeholder="Enter category description..." required>
+                                <textarea name="description" type="text" class="form-control" placeholder="Enter category description..." required>
                                 </textarea>
                             </div>
                         </div>
@@ -53,14 +51,14 @@
                             <div class="mb-3">
                                 <div class="form-check form-switch mb-3">
                                     <label class="form-check-label">status</label>
-                                    <input class="form-check-input" type="checkbox" checked="" name="status">
+                                    <input class="form-check-input" type="checkbox" value="1" checked="" name="status">
                                 </div>
                             </div>
 
                             <div>
                                 <div class="form-check form-switch mb-3">
                                     <label class="form-check-label">is_active</label>
-                                    <input class="form-check-input" type="checkbox" checked="" name="is_active">
+                                    <input class="form-check-input" type="checkbox" value="1" checked="" name="is_active">
                                 </div>
                             </div>
                         </div>
