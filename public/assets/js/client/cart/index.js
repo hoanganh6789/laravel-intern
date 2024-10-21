@@ -40,18 +40,17 @@ $(document).ready(function () {
         product_variant_id: variantId,
         quantity: qty,
       },
-      headers: {
-        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-      },
+      //   headers: {
+      //     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+      //   },
       success: (res) => {
         console.log(res);
 
-        if(!res.status){
-            showAlert('error', `${res.message}`, 'LuxChill Thông Báo');
-        }else{
-            showAlert('success', `${res.message}`, 'LuxChill Thông Báo');
+        if (!res.status) {
+          showAlert("error", `${res.message}`, "LuxChill Thông Báo");
+        } else {
+          showAlert("success", `${res.message}`, "LuxChill Thông Báo");
         }
-
       },
       error: (err) => {
         console.error(err);
@@ -61,4 +60,6 @@ $(document).ready(function () {
     // console.log(`Qty: ${qty}`);
     // console.log(`Variant Id: ${variantId}`);
   };
+
+  // tăng giảm số lượng giỏ  hàng
 });

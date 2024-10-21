@@ -62,3 +62,4 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 // ajax
 Route::post('/ajax/cart/add', [ShopController::class, 'addToCart']);
+Route::post('/ajax/cart/update', [CartController::class, 'update']);

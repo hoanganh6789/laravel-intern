@@ -75,12 +75,18 @@
                                 {{ formatPrice($price) }}đ
                             </td>
                             <td>
-                                <div class="product-single-qty">
-                                    <input class="horizontal-quantity form-control" type="text" value="{{ $item->quantity }}">
+                                <div class="d-flex" style="width: 160px">
+                                    <span>
+                                        <button class="btn-add-qty btn btn-success" data-id="{{ $item->id }}">+</button>
+                                    </span>
+                                    <input class=" form-control data-qty-{{ $item->id }} disabled" type="text" value="{{ $item->quantity }}" style="font-size: 16px" disabled>
+                                    <span>
+                                        <button class="btn-remove-qty btn btn-danger" data-id="{{ $item->id }}">-</button>
+                                    </span>
                                 </div>
                             </td>
                             <td class="text-right">
-                                <span class="subtotal-price">
+                                <span class="subtotal-price sub-price-{{ $item->id }}">
                                     {{ calculateProductSubTotal($price, $item->quantity) }}đ
                                 </span>
                             </td>
@@ -139,7 +145,7 @@
                     <tfoot>
                         <tr>
                             <td>Total</td>
-                            <td>
+                            <td id="total-price">
                                 {{ formatPrice($total) }}đ
                             </td>
                         </tr>
@@ -169,4 +175,7 @@
 
 <div class="mb-6"></div><!-- margin -->
 
+@endsection
+@section('script')
+    <script src="{{ asset('assets/js/client/cart/detail.js') }}"></script>
 @endsection

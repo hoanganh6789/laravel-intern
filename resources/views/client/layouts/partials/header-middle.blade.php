@@ -73,7 +73,7 @@
             <a href="#123" title="Cart" class="dropdown-toggle dropdown-arrow cart-toggle" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                 <i class="minicart-icon"></i>
-                <span class="cart-count badge-circle">6</span>
+                <span class="cart-count badge-circle">0</span>
             </a>
 
             <div class="cart-overlay"></div>

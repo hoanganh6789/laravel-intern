@@ -20,4 +20,9 @@ class CartRepository extends BaseRepository
     {
         return $this->model->query()->findOrFail($userId);
     }
+
+    public function findByUserIdWithRelation($userId)
+    {
+        return $this->model->query()->with(['cartItems.productVariant.product'])->where('user_id', $userId)->first();
+    }
 }

@@ -42,4 +42,15 @@ class CartItemService
     {
         return $this->cartRepository->findByUserId($id);
     }
+
+    public function calculateCartTotal($userId)
+    {
+        $cart = $this->cartRepository->findByUserIdWithRelation($userId);
+
+        return $cart->cartItems->reduce(function ($sum, $cartItem) {
+            $price = $cartItem->productVariant->product->price_sale ?: $cartItem->productVariant->product->price_regular;
+
+            return $sum + $price * $cartItem->quantity;
+        }, 0);
+    }
 }
