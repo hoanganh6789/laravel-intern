@@ -9,8 +9,9 @@
 
 <link rel="stylesheet" href="{{ asset('assets/theme/client/css/style.min.css') }}">
 
-<link rel="stylesheet" type="text/css"
-    href="{{ asset('assets/theme/client/vendor/fontawesome-free/css/all.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/theme/client/vendor/fontawesome-free/css/all.min.css') }}">
 
-<link rel="stylesheet" type="text/css"
-    href="{{ asset('assets/theme/client/vendor/simple-line-icons/css/simple-line-icons.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/theme/client/vendor/simple-line-icons/css/simple-line-icons.min.css') }}">
+
+<!-- Sweetalert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

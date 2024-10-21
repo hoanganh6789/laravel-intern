@@ -4,6 +4,8 @@
 @section('content')
 
 <div class="container">
+
+    @if($cart && $cart->cartItems->isNotEmpty())
     <ul class="checkout-progress-bar d-flex justify-content-center flex-wrap">
         <li class="active">
             <a href="{{ route('cart.index') }}">Shopping Cart</a>
@@ -17,24 +19,40 @@
     </ul>
 
     <div class="row">
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             <div class="cart-table-container">
                 <table class="table table-cart">
                     <thead>
                         <tr>
                             <th class="thumbnail-col"></th>
-                            <th class="product-col">Product</th>
+                            <th class="name-col">Name</th>
+                            <th class="color-col">Color</th>
+                            <th class="size-col">Size</th>
                             <th class="price-col">Price</th>
                             <th class="qty-col">Quantity</th>
                             <th class="text-right">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
+
+                        @foreach ($cart->cartItems as $item)
+
+                        @php
+                        $price = $item->productVariant->product->price_sale ?: $item->productVariant->product->price_regular;
+                        $slug = $item->productVariant->product->slug;
+                        $image = $item->productVariant->product->thumb_image;
+                        $name = $item->productVariant->product->name;
+                        $color = $item->productVariant->color->name;
+                        $size = $item->productVariant->size->name;
+                        @endphp
+
                         <tr class="product-row">
                             <td>
                                 <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        <img src="assets/theme/client/images/products/product-4.jpg" alt="product">
+                                    <a href="{{ route('shop.detail', $slug) }}" class="product-image">
+                                        @if(!empty($image) && Storage::exists($image))
+                                        <img src="{{ Storage::url($image) }}" alt="Product">
+                                        @endif
                                     </a>
 
                                     <a href="cart.html#" class="btn-remove icon-cancel" title="Remove Product"></a>
@@ -42,65 +60,32 @@
                             </td>
                             <td class="product-col">
                                 <h5 class="product-title">
-                                    <a href="product.html">Men Watch</a>
-                                </h5>
-                            </td>
-                            <td>$17.90</td>
-                            <td>
-                                <div class="product-single-qty">
-                                    <input class="horizontal-quantity form-control" type="text">
-                                </div><!-- End .product-single-qty -->
-                            </td>
-                            <td class="text-right"><span class="subtotal-price">$17.90</span></td>
-                        </tr>
-
-                        <tr class="product-row">
-                            <td>
-                                <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        <img src="assets/theme/client/images/products/product-3.jpg" alt="product">
+                                    <a href="{{ route('shop.detail', $slug) }}" target="_blank">
+                                        {{ limitTextLeng($name, 20) }}
                                     </a>
-
-                                    <a href="cart.html#" class="btn-remove icon-cancel" title="Remove Product"></a>
-                                </figure>
-                            </td>
-                            <td class="product-col">
-                                <h5 class="product-title">
-                                    <a href="product.html">Men Watch</a>
                                 </h5>
                             </td>
-                            <td>$17.90</td>
+                            <td>
+                                {{ $color }}
+                            </td>
+                            <td>
+                                {{ $size }}
+                            </td>
+                            <td>
+                                {{ formatPrice($price) }}đ
+                            </td>
                             <td>
                                 <div class="product-single-qty">
-                                    <input class="horizontal-quantity form-control" type="text">
-                                </div><!-- End .product-single-qty -->
+                                    <input class="horizontal-quantity form-control" type="text" value="{{ $item->quantity }}">
+                                </div>
                             </td>
-                            <td class="text-right"><span class="subtotal-price">$17.90</span></td>
+                            <td class="text-right">
+                                <span class="subtotal-price">
+                                    {{ calculateProductSubTotal($price, $item->quantity) }}đ
+                                </span>
+                            </td>
                         </tr>
-
-                        <tr class="product-row">
-                            <td>
-                                <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        <img src="assets/theme/client/images/products/product-6.jpg" alt="product">
-                                    </a>
-
-                                    <a href="cart.html#" class="btn-remove icon-cancel" title="Remove Product"></a>
-                                </figure>
-                            </td>
-                            <td class="product-col">
-                                <h5 class="product-title">
-                                    <a href="product.html">Men Black Gentle Belt</a>
-                                </h5>
-                            </td>
-                            <td>$17.90</td>
-                            <td>
-                                <div class="product-single-qty">
-                                    <input class="horizontal-quantity form-control" type="text">
-                                </div><!-- End .product-single-qty -->
-                            </td>
-                            <td class="text-right"><span class="subtotal-price">$17.90</span></td>
-                        </tr>
+                        @endforeach
                     </tbody>
 
 
@@ -114,8 +99,7 @@
                                                 {{-- <input type="text" class="form-control form-control-sm"
                                                     placeholder="Coupon Code" required> --}}
 
-                                                <select class="form-select form-select-sm" placeholder="Coupon Code"
-                                                    required>
+                                                <select class="form-select form-select-sm" placeholder="Coupon Code" required>
 
                                                     <option value="">Mã giảm giá 20.000đ</option>
                                                     <option value="">Mã giảm giá 5% tổng đơn trên 1 triệu</option>
@@ -124,7 +108,7 @@
                                                 </select>
 
                                                 <div class="input-group-append">
-                                                    <button class="btn btn-sm" type="submit">
+                                                    <button class="btn btn-sm" type="button">
                                                         Apply Coupon
                                                     </button>
                                                 </div>
@@ -139,9 +123,9 @@
             </div><!-- End .cart-table-container -->
         </div><!-- End .col-lg-8 -->
 
-        <div class="col-lg-4">
+        <div class="col-lg-12">
             <div class="cart-summary">
-                <h3>CART TOTALS</h3>
+                <h3>TOTALS</h3>
 
                 <table class="table table-totals">
                     <tbody>
@@ -150,68 +134,14 @@
                             <td>$17.90</td>
                         </tr>
 
-                        <tr>
-                            <td colspan="2" class="text-left">
-                                <h4>Shipping</h4>
-
-                                <div class="form-group form-group-custom-control">
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" class="custom-control-input" name="radio" checked>
-                                        <label class="custom-control-label">Local pickup</label>
-                                    </div><!-- End .custom-checkbox -->
-                                </div><!-- End .form-group -->
-
-                                <div class="form-group form-group-custom-control mb-0">
-                                    <div class="custom-control custom-radio mb-0">
-                                        <input type="radio" name="radio" class="custom-control-input">
-                                        <label class="custom-control-label">Flat rate</label>
-                                    </div><!-- End .custom-checkbox -->
-                                </div><!-- End .form-group -->
-
-                                <form action="cart.html#">
-                                    <div class="form-group form-group-sm">
-                                        <label>Shipping to <strong>NY.</strong></label>
-                                        <div class="select-custom">
-                                            <select class="form-control form-control-sm">
-                                                <option value="USA">United States (US)</option>
-                                                <option value="Turkey">Turkey</option>
-                                                <option value="China">China</option>
-                                                <option value="Germany">Germany</option>
-                                            </select>
-                                        </div><!-- End .select-custom -->
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-group form-group-sm">
-                                        <div class="select-custom">
-                                            <select class="form-control form-control-sm">
-                                                <option value="NY">New York</option>
-                                                <option value="CA">California</option>
-                                                <option value="TX">Texas</option>
-                                            </select>
-                                        </div><!-- End .select-custom -->
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-group form-group-sm">
-                                        <input type="text" class="form-control form-control-sm"
-                                            placeholder="Town / City">
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-group form-group-sm">
-                                        <input type="text" class="form-control form-control-sm" placeholder="ZIP">
-                                    </div><!-- End .form-group -->
-
-                                    <button type="submit" class="btn btn-shop btn-update-total">
-                                        Update Totals
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
                     </tbody>
 
                     <tfoot>
                         <tr>
                             <td>Total</td>
-                            <td>$17.90</td>
+                            <td>
+                                {{ formatPrice($total) }}đ
+                            </td>
                         </tr>
                     </tfoot>
                 </table>
@@ -224,7 +154,17 @@
                 </div>
             </div><!-- End .cart-summary -->
         </div><!-- End .col-lg-4 -->
-    </div><!-- End .row -->
+    </div>
+
+    @else
+
+    <div style="height: 100vh" class="d-flex justify-content-center align-items-center">
+        <h2 class="fst-italic text-danger">
+            Bạn chưa có sản phẩm nào. <a href="{{ route('shop.index') }}">Mua Hàng</a>
+        </h2>
+    </div>
+
+    @endif
 </div><!-- End .container -->
 
 <div class="mb-6"></div><!-- margin -->

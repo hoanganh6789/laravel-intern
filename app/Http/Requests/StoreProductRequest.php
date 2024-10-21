@@ -27,14 +27,14 @@ class StoreProductRequest extends FormRequest
             'product.name' => 'required|string|max:255',
             'product.slug' => 'nullable|unique:products,slug|max:255',
             'product.sku' => 'required|unique:products,sku|max:255',
-            'product.thumb_image' => 'nullable|image|mimes:png,jpg,jpeg',
+            'product.thumb_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp',
             'product.price_regular' => 'required|numeric',
             'product.price_sale' => 'nullable|numeric|lt:product.price_regular',
             'product.description' => 'nullable',
             'product.content' => 'nullable',
             // product_galleries
             'product_galleries' => 'required|array|min:1|max:5',
-            'product_galleries.*' => 'image',
+            'product_galleries.*' => 'image|mimes:jpeg,png,jpg,gif,svg,webp',
             // colors
             'colors' => "required|array|min:1",
             // sizes

@@ -80,6 +80,7 @@
     </a>
 
     {{-- script global --}}
+    @include('client.layouts.partials.global')
     @include('client.layouts.partials.script')
     {{-- script local --}}
     @yield('script')

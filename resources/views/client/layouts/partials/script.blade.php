@@ -12,3 +12,6 @@
 
 <!-- Main JS File -->
 <script src="{{ asset('assets/theme/client/js/main.min.js') }}"></script>
+
+{{-- config alert --}}
+<script src="{{ asset('assets/js/config.js') }}"></script>

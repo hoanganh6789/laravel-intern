@@ -99,10 +99,9 @@
                                         </td>
 
                                         <td>
-                                            {{-- {{ Str::take($product->name, 10) }} --}}
-
-                                            {{ Str::length($product->name) > 10 ? Str::limit($product->name, 10, '...') : $product->name }}
-
+                                            {{ Str::length($product->name) > 10
+                                            ? Str::limit($product->name, 10, '...')
+                                            : $product->name }}
                                         </td>
 
                                         <td>

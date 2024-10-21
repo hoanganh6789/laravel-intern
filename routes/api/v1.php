@@ -9,4 +9,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/{productId}/{sizeId}/{colorId}/variants', [ProductController::class, 'filterVariant']);
+
+// Route::post('cart/add', [ProductController::class, 'handleAddToCart']);
+
 Route::get('/product/{id}', [ProductController::class, 'show']);

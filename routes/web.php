@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LoginSocialController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -18,9 +19,11 @@ use Illuminate\Support\Facades\Route;
 // route client
 Route::get('/',                             [HomeController::class, 'home'])->name('home');
 
-Route::get('/shop',                         [ShopController::class, 'shop'])->name('shop.index');
+Route::get('/shop',                         [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/{category}',              [ShopController::class, 'shop'])->name('shop.category');
-Route::get('/shop/detail/{slug}',           [ShopController::class, 'detail'])->name('shop.detail');
+Route::get('/shop/{slug}/detail',           [ShopController::class, 'detail'])->name('shop.detail');
+
+// Route::get('/shop/{slug}/detail', [ShopController::class, 'detail2'])->name('shop.detail2');
 
 Route::get('/about',                        [AboutController::class, 'index'])->name('about');
 Route::get('/contact',                      [ContactController::class, 'index'])->name('contact');
@@ -56,3 +59,6 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// ajax
+Route::post('/ajax/cart/add', [ShopController::class, 'addToCart']);

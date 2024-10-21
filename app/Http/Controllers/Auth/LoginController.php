@@ -34,7 +34,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
+            
             $redirectRoute = Auth::user()->isAdmin() ? 'admin.dashboard' : 'home';
 
             Toastr::success(null, self::LOGIN_MESSAGE);

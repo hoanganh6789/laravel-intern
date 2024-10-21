@@ -1,5 +1,8 @@
 @extends('client.layouts.master')
-@section('title', 'Shop Details')
+@section('title')
+{{ $product->name }}
+@endsection
+
 @section('content')
 <div class="container">
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -12,13 +15,15 @@
             <li class="breadcrumb-item">
                 <a href="product.html#">Shop</a>
             </li>
-            <li class="breadcrumb-item active" aria-current="page">Quần Áo Nam 123</li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ $product->name }}
+            </li>
         </ol>
     </nav>
 
     <div class="product-single-container product-single-default">
         <div class="cart-message d-none">
-            <strong class="single-cart-notice">“Men Black Sports Shoes”</strong>
+            <strong class="single-cart-notice">“{{ $product->name }}”</strong>
             <span>has been added to your cart.</span>
         </div>
 
@@ -26,78 +31,65 @@
             <div class="col-lg-5 col-md-6 product-single-gallery">
                 <div class="product-slider-container">
                     <div class="label-group">
-                        <div class="product-label label-hot">HOT</div>
+                        {{-- <div class="product-label label-hot">HOT</div> --}}
                         <!---->
+                        @if($product->price_sale > 0)
                         <div class="product-label label-sale">
                             -16%
                         </div>
+                        @endif
                     </div>
 
+                    @if(!empty($product->galleries->isNotEmpty()))
+                    <div class="product-single-carousel owl-carousel owl-theme show-nav-hover">
+                        @foreach ($product->galleries as $image)
+                        <div class="product-item">
+                            @if($image && Storage::exists($image->image))
+                            <img class="product-single-image" src="{{ Storage::url($image->image) }}" data-zoom-image="{{ Storage::url($image->image) }}" width="468px" height="468px" alt="product" style="height: 478px" />
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+                    @else
                     <div class="product-single-carousel owl-carousel owl-theme show-nav-hover">
                         <div class="product-item">
-                            <img class="product-single-image"
-                                src="/assets/theme/client/images/products/zoom/product-1-big.jpg"
-                                data-zoom-image="/assets/theme/client/images/products/zoom/product-1-big.jpg"
-                                width="468" height="468" alt="product" />
-                        </div>
-                        <div class="product-item">
-                            <img class="product-single-image"
-                                src="/assets/theme/client/images/products/zoom/product-2-big.jpg"
-                                data-zoom-image="/assets/theme/client/images/products/zoom/product-2-big.jpg"
-                                width="468" height="468" alt="product" />
-                        </div>
-                        <div class="product-item">
-                            <img class="product-single-image"
-                                src="/assets/theme/client/images/products/zoom/product-3-big.jpg"
-                                data-zoom-image="/assets/theme/client/images/products/zoom/product-3-big.jpg"
-                                width="468" height="468" alt="product" />
-                        </div>
-                        <div class="product-item">
-                            <img class="product-single-image"
-                                src="/assets/theme/client/images/products/zoom/product-4-big.jpg"
-                                data-zoom-image="/assets/theme/client/images/products/zoom/product-4-big.jpg"
-                                width="468" height="468" alt="product" />
-                        </div>
-                        <div class="product-item">
-                            <img class="product-single-image"
-                                src="/assets/theme/client/images/products/zoom/product-5-big.jpg"
-                                data-zoom-image="/assets/theme/client/images/products/zoom/product-5-big.jpg"
-                                width="468" height="468" alt="product" />
+
+                            @if($product->thumb_image && Storage::exists($product->thumb_image))
+                            <img class="product-single-image" src="{{ Storage::url($product->thumb_image) }}" data-zoom-image="{{ Storage::url($product->thumb_image) }}" width="478px" height="478px" alt="product" style="height: 478px;" />
+                            @else
+                            <img class="product-single-image" src="{{ $product->thumb_image }}" data-zoom-image="/assets/theme/client/images/products/zoom/product-1-big.jpg" width="468" height="468" alt="product" />
+                            @endif
+
                         </div>
                     </div>
+                    @endif
+
                     <!-- End .product-single-carousel -->
                     <span class="prod-full-screen">
                         <i class="icon-plus"></i>
                     </span>
                 </div>
 
+                @if(!empty($product->galleries->isNotEmpty()))
                 <div class="prod-thumbnail owl-dots">
+
+                    @foreach ($product->galleries as $gallery)
                     <div class="owl-dot">
-                        <img src="/assets/theme/client/images/products/zoom/product-1.jpg" width="110" height="110"
-                            alt="product-thumbnail" />
+                        @if($gallery->image && Storage::exists($gallery->image))
+                        <img src="{{ Storage::url($gallery->image) }}" alt="product-thumbnail" style="width: 110px; height: 110px;" />
+                        @endif
                     </div>
-                    <div class="owl-dot">
-                        <img src="/assets/theme/client/images/products/zoom/product-2.jpg" width="110" height="110"
-                            alt="product-thumbnail" />
-                    </div>
-                    <div class="owl-dot">
-                        <img src="/assets/theme/client/images/products/zoom/product-3.jpg" width="110" height="110"
-                            alt="product-thumbnail" />
-                    </div>
-                    <div class="owl-dot">
-                        <img src="/assets/theme/client/images/products/zoom/product-4.jpg" width="110" height="110"
-                            alt="product-thumbnail" />
-                    </div>
-                    <div class="owl-dot">
-                        <img src="/assets/theme/client/images/products/zoom/product-5.jpg" width="110" height="110"
-                            alt="product-thumbnail" />
-                    </div>
+                    @endforeach
                 </div>
+                @endif
+
             </div>
             <!-- End .product-single-gallery -->
 
             <div class="col-lg-7 col-md-6 product-single-details">
-                <h1 class="product-title">Men Black Sports Shoes</h1>
+                <h1 class="product-title">
+                    {{ $product->name }}
+                </h1>
 
                 <div class="ratings-container">
                     <div class="product-ratings">
@@ -114,12 +106,18 @@
                 <hr class="short-divider">
 
                 <div class="price-box">
+                    <span class="new-price text-danger">
+                        {{ formatPrice($product->price_regular) }}đ
+                    </span>
+                    @if($product->price_sale > 0)
                     <span class="old-price">$15.00</span>
                     <span class="new-price text-danger"> $35.00</span>
+                    @endif
                 </div>
                 <!-- End .price-box -->
 
                 <div class="product-desc">
+                    @if($product->content)
                     <p>
                         Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
                         egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet,
@@ -127,6 +125,7 @@
                         Mauris
                         placerat eleifend leo.
                     </p>
+                    @endif
                 </div>
                 <!-- End .product-desc -->
 
@@ -134,63 +133,53 @@
                     <!---->
                     <li>
                         SKU:
-                        <strong>654613612</strong>
+                        <strong>
+                            {{ $product->sku }}
+                        </strong>
                     </li>
 
                     <li>
                         CATEGORY:
                         <strong>
-                            <a href="product-variable.html#" class="product-category">SHOES</a>
+                            <a href="{{ route('shop.category', $product->category->slug) }}" class="product-category">
+                                {{ $product->category->name }}
+                            </a>
                         </strong>
                     </li>
 
                     <li>
                         TAGs:
-                        <strong><a href="product-variable.html#" class="product-category">CLOTHES</a></strong>,
-                        <strong><a href="product-variable.html#" class="product-category">SWEATER</a></strong>
+                        @foreach ($product->tags as $tag)
+                        <strong>
+                            <a href="product-variable.html#" class="product-category">{{ $tag->name }}</a>,
+                        </strong>
+                        @endforeach
                     </li>
                 </ul>
 
                 <div class="product-filters-container">
                     <div class="product-single-filter"><label>Color:</label>
                         <ul class="config-size-list config-color-list config-filter-list">
+                            @foreach ($colors as $color)
                             <li class="">
-                                <a href="javascript:;" class="filter-color border-0"
-                                    style="background-color: rgb(1, 136, 204);"></a>
+                                <a href="javascript:;" class="filter-color" data-color-id="{{ $color->id }}">
+                                    {{ $color->name }}
+                                </a>
                             </li>
-                            <li class="">
-                                <a href="javascript:;" class="filter-color border-0 initial disabled"
-                                    style="background-color: rgb(221, 181, 119);"></a>
-                            </li>
-                            <li class="">
-                                <a href="javascript:;" class="filter-color border-0"
-                                    style="background-color: rgb(96, 133, 165);"></a>
-                            </li>
+                            @endforeach
                         </ul>
                     </div>
 
                     <div class="product-single-filter">
                         <label>Size:</label>
                         <ul class="config-size-list">
+                            @foreach ($sizes as $size)
                             <li>
-                                <a href="javascript:;" class="d-flex align-items-center justify-content-center">
-                                    Extra Large</a>
-                            </li>
-                            <li class="">
-                                <a href="javascript:;" class="d-flex align-items-center justify-content-center">
-                                    Large
+                                <a href="javascript:;" data-size-id="{{ $size->id }}" class="d-flex align-items-center justify-content-center filter-size">
+                                    {{ $size->name }}
                                 </a>
                             </li>
-                            <li class="">
-                                <a href="javascript:;" class="d-flex align-items-center justify-content-center">
-                                    Medium
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="javascript:;" class="d-flex align-items-center justify-content-center">
-                                    Small
-                                </a>
-                            </li>
+                            @endforeach
                         </ul>
                     </div>
 
@@ -208,12 +197,16 @@
                     </div>
 
                     <div class="product-single-qty">
-                        <input class="horizontal-quantity form-control" type="text">
+                        <input id="product-quantity" class="horizontal-quantity form-control" type="text">
                     </div>
                     <!-- End .product-single-qty -->
 
-                    <a href="javascript:;" class="btn btn-dark add-cart mr-2" title="Add to Cart">Add to
-                        Cart</a>
+                    <button id="btn-add-cart" data-product-id="{{ $product->id }}" class="btn btn-dark add-cart mr-2" type="button">
+                        Add to Cart
+                    </button>
+
+                    {{-- <a href="javascript:;" class="btn btn-dark add-cart mr-2" title="Add to Cart">Add to
+                        Cart</a> --}}
 
                     <a href="cart.html" class="btn btn-gray view-cart d-none">View cart</a>
                 </div>
@@ -225,21 +218,15 @@
                     <label class="sr-only">Share:</label>
 
                     <div class="social-icons mr-2">
-                        <a href="product-variable.html#" class="social-icon social-facebook icon-facebook"
-                            target="_blank" title="Facebook"></a>
-                        <a href="product-variable.html#" class="social-icon social-twitter icon-twitter" target="_blank"
-                            title="Twitter"></a>
-                        <a href="product-variable.html#" class="social-icon social-linkedin fab fa-linkedin-in"
-                            target="_blank" title="Linkedin"></a>
-                        <a href="product-variable.html#" class="social-icon social-gplus fab fa-google-plus-g"
-                            target="_blank" title="Google +"></a>
-                        <a href="product-variable.html#" class="social-icon social-mail icon-mail-alt" target="_blank"
-                            title="Mail"></a>
+                        <a href="product-variable.html#" class="social-icon social-facebook icon-facebook" target="_blank" title="Facebook"></a>
+                        <a href="product-variable.html#" class="social-icon social-twitter icon-twitter" target="_blank" title="Twitter"></a>
+                        <a href="product-variable.html#" class="social-icon social-linkedin fab fa-linkedin-in" target="_blank" title="Linkedin"></a>
+                        <a href="product-variable.html#" class="social-icon social-gplus fab fa-google-plus-g" target="_blank" title="Google +"></a>
+                        <a href="product-variable.html#" class="social-icon social-mail icon-mail-alt" target="_blank" title="Mail"></a>
                     </div>
                     <!-- End .social-icons -->
 
-                    <a href="wishlist.html" class="btn-icon-wish add-wishlist" title="Add to Wishlist"><i
-                            class="icon-wishlist-2"></i><span>Add to
+                    <a href="wishlist.html" class="btn-icon-wish add-wishlist" title="Add to Wishlist"><i class="icon-wishlist-2"></i><span>Add to
                             Wishlist</span></a>
                 </div>
                 <!-- End .product single-share -->
@@ -252,30 +239,25 @@
     <div class="product-single-tabs">
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="product-tab-desc" data-toggle="tab" href="#product-desc-content"
-                    role="tab" aria-controls="product-desc-content" aria-selected="true">Description</a>
+                <a class="nav-link active" id="product-tab-desc" data-toggle="tab" href="#product-desc-content" role="tab" aria-controls="product-desc-content" aria-selected="true">Description</a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" id="product-tab-size" data-toggle="tab" href="#product-size-content" role="tab"
-                    aria-controls="product-size-content" aria-selected="true">Size Guide</a>
+                <a class="nav-link" id="product-tab-size" data-toggle="tab" href="#product-size-content" role="tab" aria-controls="product-size-content" aria-selected="true">Size Guide</a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" id="product-tab-tags" data-toggle="tab" href="#product-tags-content" role="tab"
-                    aria-controls="product-tags-content" aria-selected="false">Additional
+                <a class="nav-link" id="product-tab-tags" data-toggle="tab" href="#product-tags-content" role="tab" aria-controls="product-tags-content" aria-selected="false">Additional
                     Information</a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" id="product-tab-reviews" data-toggle="tab" href="#product-reviews-content"
-                    role="tab" aria-controls="product-reviews-content" aria-selected="false">Reviews (1)</a>
+                <a class="nav-link" id="product-tab-reviews" data-toggle="tab" href="#product-reviews-content" role="tab" aria-controls="product-reviews-content" aria-selected="false">Reviews (1)</a>
             </li>
         </ul>
 
         <div class="tab-content">
-            <div class="tab-pane fade show active" id="product-desc-content" role="tabpanel"
-                aria-labelledby="product-tab-desc">
+            <div class="tab-pane fade show active" id="product-desc-content" role="tabpanel" aria-labelledby="product-tab-desc">
                 <div class="product-desc-content">
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                         incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, nostrud ipsum
@@ -303,8 +285,7 @@
                 <div class="product-size-content">
                     <div class="row">
                         <div class="col-md-4">
-                            <img src="{{ asset('assets/theme/client/images/products/single/body-shape.png') }}"
-                                alt="body shape" width="217" height="398">
+                            <img src="{{ asset('assets/theme/client/images/products/single/body-shape.png') }}" alt="body shape" width="217" height="398">
                         </div>
                         <!-- End .col-md-4 -->
 
@@ -392,16 +373,14 @@
             </div>
             <!-- End .tab-pane -->
 
-            <div class="tab-pane fade" id="product-reviews-content" role="tabpanel"
-                aria-labelledby="product-tab-reviews">
+            <div class="tab-pane fade" id="product-reviews-content" role="tabpanel" aria-labelledby="product-tab-reviews">
                 <div class="product-reviews-content">
                     <h3 class="reviews-title">1 review for Men Black Sports Shoes</h3>
 
                     <div class="comment-list">
                         <div class="comments">
                             <figure class="img-thumbnail">
-                                <img src="{{ asset('assets/theme/client/images/blog/author.jpg') }}" alt="author"
-                                    width="80" height="80">
+                                <img src="{{ asset('assets/theme/client/images/blog/author.jpg') }}" alt="author" width="80" height="80">
                             </figure>
 
                             <div class="comment-block">
@@ -506,4 +485,8 @@
     </section>
 
 </div>
+@endsection
+
+@section('script')
+<script src="{{ asset('assets/js/client/cart/index.js') }}"></script>
 @endsection

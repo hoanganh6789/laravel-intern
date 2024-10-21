@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Str;
 
+/**
+ *
+ * @var Str @abstractStr
+ *
+ */
+
 if (!function_exists('activeMenu')) {
     function activeMenu($uri)
     {
@@ -37,3 +43,33 @@ if (!function_exists('activeTab')) {
         return $currentTab === $tabName ? 'active' : '';
     }
 }
+
+if (!function_exists('formatPrice')) {
+    function formatPrice($price)
+    {
+        return number_format($price);
+    }
+}
+
+if (!function_exists('limitTextLeng')) {
+    function limitTextLeng($text, $limit, $end = "...")
+    {
+        return Str::length($text) > $limit ? Str::limit($text, $limit, $end) : $text;
+    }
+}
+
+if (!function_exists('calculateProductSubTotal')) {
+    function calculateProductSubTotal($price, $quantity)
+    {
+        return number_format($price * $quantity);
+    }
+}
+
+// if (!function_exists('calculateOrderTotal')) {
+//     function calculateOrderTotal($)
+//     {
+//         return $price * $quantity;
+//     }
+// }
+
+
