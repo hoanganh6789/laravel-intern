@@ -40,7 +40,9 @@ const showAlertConfirmTrash = (callback) => {
   });
 };
 
-const showToastr = () => {};
+const showToastr = (icon = "success", message = null, title = null) => {
+  toastr[icon](message, title);
+};
 
 $(function () {
   $.ajaxSetup({

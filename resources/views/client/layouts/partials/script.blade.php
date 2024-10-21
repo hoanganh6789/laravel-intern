@@ -13,6 +13,8 @@
 <!-- Main JS File -->
 <script src="{{ asset('assets/theme/client/js/main.min.js') }}"></script>
 
+{{-- toastr --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 {{-- global --}}
 <script src="{{ asset('assets/js/client/global.js') }}"></script>
 {{-- config alert --}}

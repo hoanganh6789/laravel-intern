@@ -40,26 +40,18 @@ $(document).ready(function () {
         product_variant_id: variantId,
         quantity: qty,
       },
-      //   headers: {
-      //     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-      //   },
       success: (res) => {
         console.log(res);
 
         if (!res.status) {
-          showAlert("error", `${res.message}`, "LuxChill Thông Báo");
+          showToastr("error", "Thêm vào giỏ hàng thất bại");
         } else {
-          showAlert("success", `${res.message}`, "LuxChill Thông Báo");
+          showToastr("success", "Đã thêm vào giỏ hàng");
         }
       },
       error: (err) => {
         console.error(err);
       },
     });
-    // console.log(`product id: ${productId}`);
-    // console.log(`Qty: ${qty}`);
-    // console.log(`Variant Id: ${variantId}`);
   };
-
-  // tăng giảm số lượng giỏ  hàng
 });

@@ -35,6 +35,7 @@ $(function () {
         console.log(res);
         $(`.sub-price-${id}`).text(formatPrice(res.subTotal));
         $("#total-price").text(formatPrice(res.total));
+        showToastr('success', 'Sửa thành công');
       },
       error: (err) => {
         console.error(err);
