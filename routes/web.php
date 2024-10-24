@@ -31,8 +31,9 @@ Route::get('/policy',                       [PolicyController::class, 'index'])-
 
 Route::get('/wishlist',                     [WishlistController::class, 'wishlist'])->name('wishlist.index');
 Route::get('/cart',                         [CartController::class, 'index'])->name('cart.index');
-Route::get('/check-out',                    [CheckOutController::class, 'index'])->name('check-out');
 
+Route::get('/check-out',                    [CheckOutController::class, 'index'])->name('check-out');
+Route::post('/check-out/handle', [CheckOutController::class, 'handle'])->name('check-out.handle');
 
 // middleware route
 Route::middleware(['auth'])->group(function () {

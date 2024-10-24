@@ -19,3 +19,5 @@
 <script src="{{ asset('assets/js/client/global.js') }}"></script>
 {{-- config alert --}}
 <script src="{{ asset('assets/js/config.js') }}"></script>
+{{-- select2 --}}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

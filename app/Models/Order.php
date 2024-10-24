@@ -9,7 +9,6 @@ class Order extends Model
 {
     use HasFactory;
 
-
     const STATUS_ORDER = [
         'pending'           => 'Chờ xác nhận',
         'confirmed'         => 'Đã xác nhận',
@@ -49,4 +48,9 @@ class Order extends Model
         'status_payment',
         'total_price'
     ];
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }

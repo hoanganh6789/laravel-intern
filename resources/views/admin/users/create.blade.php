@@ -130,7 +130,7 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">City</label>
-                                        <select class="form-select"id="city"
+                                        <select class="form-select" id="city"
                                             value="{{ old('address.city') }}">
                                             <option value="0" selected>Chọn Thành Phố</option>
                                         </select>

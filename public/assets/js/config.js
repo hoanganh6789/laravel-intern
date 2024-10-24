@@ -46,8 +46,13 @@ const showToastr = (icon = "success", message = null, title = null) => {
 
 $(function () {
   $.ajaxSetup({
-    headers: {
-      "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+    beforeSend: function (xhr, settings) {
+      if (settings.type !== "GET") {
+        xhr.setRequestHeader(
+          "X-CSRF-TOKEN",
+          $('meta[name="csrf-token"]').attr("content")
+        );
+      }
     },
   });
 });
