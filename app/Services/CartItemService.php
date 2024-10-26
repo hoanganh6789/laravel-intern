@@ -47,6 +47,10 @@ class CartItemService
     {
         $cart = $this->cartRepository->findByUserIdWithRelation($userId);
 
+        if (!$cart || !$cart->cartItems) {
+            return 0;
+        }
+
         return $cart->cartItems->reduce(function ($sum, $cartItem) {
             $price = $cartItem->productVariant->product->price_sale ?: $cartItem->productVariant->product->price_regular;
 

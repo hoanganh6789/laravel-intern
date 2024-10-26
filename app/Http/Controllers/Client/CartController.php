@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Helper\Toastr;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Services\CartItemService;
+use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -14,10 +16,12 @@ class CartController extends Controller
 {
     private const PATH_VIEW = 'client.';
     protected $cartItemService;
+    protected $cartService;
 
-    public function __construct(CartItemService $cartItemService)
+    public function __construct(CartItemService $cartItemService, CartService $cartService)
     {
         $this->cartItemService = $cartItemService;
+        $this->cartService = $cartService;
     }
 
     public function index()
@@ -25,16 +29,7 @@ class CartController extends Controller
         $userId = Auth::id();
 
         if ($userId) {
-            $cart = Cart::with(['cartItems.productVariant.product'])
-                ->where('user_id', $userId)
-                ->first();
-
-            $total = $cart->cartItems->reduce(function ($sum, $cartItem) {
-                $price = $cartItem->productVariant->product->price_sale ?: $cartItem->productVariant->product->price_regular;
-                $quantity = $cartItem->quantity;
-
-                return $sum + $price * $quantity;
-            }, 0);
+            [$cart, $total] = $this->cartService->getCartWithTotal($userId);
         }
 
         return view(self::PATH_VIEW . 'cart', compact('cart', 'total'));

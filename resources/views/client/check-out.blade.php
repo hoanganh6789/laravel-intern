@@ -348,7 +348,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-dark btn-place-order">
+                    <button type="submit" name="payUrl" class="btn btn-dark btn-place-order">
                         Place order
                     </button>
                 </div>

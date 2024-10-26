@@ -18,11 +18,17 @@ class CartRepository extends BaseRepository
 
     public function findByUserId($userId)
     {
-        return $this->model->query()->findOrFail($userId);
+        return $this->model
+            ->query()
+            ->findOrFail($userId);
     }
 
     public function findByUserIdWithRelation($userId)
     {
-        return $this->model->query()->with(['cartItems.productVariant.product'])->where('user_id', $userId)->first();
+        return $this->model
+            ->query()
+            ->with(['cartItems.productVariant.product'])
+            ->where('user_id', $userId)
+            ->first();
     }
 }
