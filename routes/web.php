@@ -37,7 +37,15 @@ Route::post('/check-out/handle', [CheckOutController::class, 'handle'])->name('c
 
 // middleware route
 Route::middleware(['auth'])->group(function () {
-    Route::get('/account',                  [AccountController::class, 'index'])->name('account.index');
+    // Route::get('/account',                  [AccountController::class, 'index'])
+    //     ->name('account.index');
+    Route::as('account.')
+        ->prefix('/account')
+        ->group(function () {
+            Route::get('/', [AccountController::class, 'index'])->name('index');
+            Route::get('/orders', [AccountController::class, 'orders'])->name('orders');
+            Route::get('/orders/{id}', [AccountController::class, 'orderDetail'])->name('order_detail');
+        });
 });
 
 // auth route

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Order;
 use App\Repositories\OrderRepository;
 
 class OrderService
@@ -18,5 +19,19 @@ class OrderService
         return $this->orderRepository->create($data);
     }
 
-    
+    public function getOrderById($id)
+    {
+        return $this->orderRepository->find($id);
+    }
+
+    public function getOrderWithUserId($userId)
+    {
+        $orders = Order::with(['orderItems'])->latest('id')->where('user_id', $userId)->get();
+
+        return $orders;
+
+        // dd($quantity);
+
+        // dd($order);
+    }
 }

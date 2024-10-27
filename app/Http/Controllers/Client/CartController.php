@@ -30,6 +30,9 @@ class CartController extends Controller
 
         if ($userId) {
             [$cart, $total] = $this->cartService->getCartWithTotal($userId);
+        } else {
+            $cart = [];
+            $total = 0;
         }
 
         return view(self::PATH_VIEW . 'cart', compact('cart', 'total'));

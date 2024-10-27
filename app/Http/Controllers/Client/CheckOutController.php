@@ -32,19 +32,18 @@ class CheckOutController extends Controller
         $resultCode = request()->resultCode ?: null;
 
         $cart = [];
+        $total = 0;
 
         if ($userId) {
             [$cart, $total] = $this->cartServices->getCartWithTotal($userId);
+        }
 
-            if (empty($cart)) {
-                return redirect()->route('shop.index');
-            }
+        if (empty($cart)) {
+            return redirect()->route('shop.index');
+        }
 
-            if (request()->has('orderId') && request()->has('resultCode') && $resultCode == 0) {
-                return $this->checkOutServices->isMomo();
-            }
-        } else {
-            $cart = [];
+        if (request()->has('orderId') && request()->has('resultCode') && $resultCode == 0) {
+            return $this->checkOutServices->isMomo();
         }
 
         return view(self::PATH_VIEW . 'check-out', compact('cart', 'total'));

@@ -65,11 +65,47 @@ if (!function_exists('calculateProductSubTotal')) {
     }
 }
 
+if (!function_exists('matchStatusOrder')) {
+    function matchStatusOrder($status)
+    {
+        return match ($status) {
+            'pending'           => 'Chờ xác nhận',
+            'confirmed'         => 'Đã xác nhận',
+            'preparing_goods'   => 'Đang chuẩn bị hàng',
+            'shipping'          => 'Đang vận chuyển',
+            'delivered'         => 'Đã giao hàng',
+            'canceled'          => 'Đơn hàng đã bị hủy',
+        };
+    }
+}
+
+if (!function_exists('matchStatusPayMent')) {
+    function matchStatusPayMent($status)
+    {
+        return match ($status) {
+            'unpaid'            => "Chưa thanh toán",
+            'paid'              => "Đã thanh toán"
+        };
+    }
+}
+
+if (!function_exists('statusOrderClass')) {
+    function statusOrderClass($status)
+    {
+        return match ($status) {
+            'pending'           => 'bg-warning text-dark',
+            'confirmed'         => 'bg-primary text-white',
+            'preparing_goods'   => 'bg-info text-white',
+            'shipping'          => 'bg-secondary text-dark',
+            'delivered'         => 'bg-success text-white',
+            'canceled'          => 'bg-danger text-white',
+        };
+    }
+}
+
 // if (!function_exists('calculateOrderTotal')) {
 //     function calculateOrderTotal($)
 //     {
 //         return $price * $quantity;
 //     }
 // }
-
-

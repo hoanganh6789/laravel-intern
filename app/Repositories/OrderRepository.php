@@ -21,4 +21,6 @@ class OrderRepository extends BaseRepository
     {
         return $this->model->latest('id')->get();
     }
+
+    
 }
