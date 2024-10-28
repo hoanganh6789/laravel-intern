@@ -252,7 +252,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" id="product-tab-reviews" data-toggle="tab" href="#product-reviews-content" role="tab" aria-controls="product-reviews-content" aria-selected="false">Reviews (1)</a>
+                <a class="nav-link" id="product-tab-reviews" data-toggle="tab" href="#product-reviews-content" role="tab" aria-controls="product-reviews-content" aria-selected="false">Reviews ({{ count($comments) }})</a>
             </li>
         </ul>
 
@@ -375,12 +375,23 @@
 
             <div class="tab-pane fade" id="product-reviews-content" role="tabpanel" aria-labelledby="product-tab-reviews">
                 <div class="product-reviews-content">
-                    <h3 class="reviews-title">1 review for Men Black Sports Shoes</h3>
+                    {{-- <h3 class="reviews-title">1 review for Men Black Sports Shoes</h3> --}}
 
                     <div class="comment-list">
-                        <div class="comments">
+                        @if($comments->isNotEmpty())
+                        @foreach ($comments as $comment)
+                        <div class="comments mb-1">
                             <figure class="img-thumbnail">
-                                <img src="{{ asset('assets/theme/client/images/blog/author.jpg') }}" alt="author" width="80" height="80">
+
+                                @php
+                                $image = $comment->user->avatar
+                                @endphp
+
+                                @if($image && Storage::exists($image))
+                                <img src="{{ Storage::url($image) }}" alt="{{ $comment->user->name }}" width="80" height="80">
+                                @else
+                                <img src="https://laravel.com/img/logomark.min.svg" alt="Default" width="80" height="80">
+                                @endif
                             </figure>
 
                             <div class="comment-block">
@@ -389,7 +400,7 @@
 
                                     <div class="ratings-container float-sm-right">
                                         <div class="product-ratings">
-                                            <span class="ratings" style="width:60%"></span>
+                                            <span class="ratings" style="width:{{ matchRatings($comment->rating) }}"></span>
                                             <!-- End .ratings -->
                                             <span class="tooltiptext tooltip-top"></span>
                                         </div>
@@ -397,23 +408,38 @@
                                     </div>
 
                                     <span class="comment-by">
-                                        <strong>Joe Doe</strong> – April 12, 2018
+                                        <strong>{{ $comment->user->name }}</strong>
+                                        – {{ $comment->created_at }}
                                     </span>
                                 </div>
 
                                 <div class="comment-content">
-                                    <p>Excellent.</p>
+                                    <p>
+                                        {{ $comment->content }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
+                        @endforeach
+                        @else
+                        <h1>Chua co comment nao</h1>
+                        @endif
                     </div>
+
 
                     <div class="divider"></div>
 
                     <div class="add-product-review">
                         <h3 class="review-title">Add a review</h3>
 
-                        <form action="product-variable.html#" class="comment-form m-0">
+                        @guest
+
+                        <h1>Dang nhap de comment <a href="{{ route('login') }}">Login</a></h1>
+
+                        @else
+                        <form action="{{ route('shop.comment.store') }}" method="POST" enctype="multipart/form-data" class="comment-form m-0">
+                            @csrf
+                            <input type="tel" hidden value="{{ $product->id }}" name="product_id">
                             <div class="rating-form">
                                 <label for="rating">Your rating <span class="required">*</span></label>
                                 <span class="rating-stars">
@@ -435,41 +461,16 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Your review <span class="required">*</span></label>
-                                <textarea cols="5" rows="6" class="form-control form-control-sm"></textarea>
+                                <label>Your review
+                                    <span class="required">*</span>
+                                </label>
+                                <textarea cols="5" rows="6" class="form-control form-control-sm" name="content"></textarea>
                             </div>
                             <!-- End .form-group -->
 
-
-                            <div class="row">
-                                <div class="col-md-6 col-xl-12">
-                                    <div class="form-group">
-                                        <label>Name <span class="required">*</span></label>
-                                        <input type="text" class="form-control form-control-sm" required>
-                                    </div>
-                                    <!-- End .form-group -->
-                                </div>
-
-                                <div class="col-md-6 col-xl-12">
-                                    <div class="form-group">
-                                        <label>Email <span class="required">*</span></label>
-                                        <input type="text" class="form-control form-control-sm" required>
-                                    </div>
-                                    <!-- End .form-group -->
-                                </div>
-
-                                <div class="col-md-12">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="save-name" />
-                                        <label class="custom-control-label mb-0" for="save-name">Save my
-                                            name, email, and website in this browser for the next time I
-                                            comment.</label>
-                                    </div>
-                                </div>
-                            </div>
-
                             <input type="submit" class="btn btn-primary" value="Submit">
                         </form>
+                        @endguest
                     </div>
                     <!-- End .add-product-review -->
                 </div>

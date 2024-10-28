@@ -23,6 +23,8 @@ Route::get('/shop',                         [ShopController::class, 'index'])->n
 Route::get('/shop/{category}',              [ShopController::class, 'shop'])->name('shop.category');
 Route::get('/shop/{slug}/detail',           [ShopController::class, 'detail'])->name('shop.detail');
 
+Route::post('/shop/comment', [ShopController::class, 'handleComment'])->name('shop.comment.store');
+
 // Route::get('/shop/{slug}/detail', [ShopController::class, 'detail2'])->name('shop.detail2');
 
 Route::get('/about',                        [AboutController::class, 'index'])->name('about');

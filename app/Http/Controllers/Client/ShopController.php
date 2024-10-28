@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Helper\Toastr;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Comment;
 use App\Models\Product;
+use App\Services\CommentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +18,12 @@ use Illuminate\Support\Facades\Log;
 class ShopController extends Controller
 {
     private const PATH_VIEW = 'client.';
+
+    protected $commentService;
+    public function __construct(CommentService $commentService)
+    {
+        $this->commentService = $commentService;
+    }
 
     public function index()
     {
@@ -154,13 +163,12 @@ class ShopController extends Controller
     {
 
         try {
-
-            // dd(session()->all());
-
             $product = Product::with(['category', 'tags', 'galleries', 'variants.color', 'variants.size'])->where('slug', $slugProduct)->first();
 
             $colors = $product->variants->pluck('color')->unique('id');
             $sizes = $product->variants->pluck('size')->unique('id');
+
+            $comments = $this->commentService->getComment($product->id);
 
             $featureds = [
                 [
@@ -255,7 +263,7 @@ class ShopController extends Controller
                 ]
             ];
 
-            return view(self::PATH_VIEW . 'shop-detail', compact('featureds', 'product', 'colors', 'sizes'));
+            return view(self::PATH_VIEW . 'shop-detail', compact('featureds', 'product', 'colors', 'sizes', 'comments'));
         } catch (\Throwable $th) {
             abort(404);
         }
@@ -405,5 +413,15 @@ class ShopController extends Controller
         //         'status' => false
         //     ]);
         // }
+    }
+
+    public function handleComment(Request $request)
+    {
+        $comment = $this->commentService->createComment($request->all());
+
+        if ($comment) {
+            Toastr::success(null, 'Cảm ơn bạn đã comment');
+            return back();
+        }
     }
 }

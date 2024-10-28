@@ -103,6 +103,20 @@ if (!function_exists('statusOrderClass')) {
     }
 }
 
+if (!function_exists('matchRatings')) {
+    function matchRatings($rating)
+    {
+        return match ($rating) {
+            5             => '100%',
+            4             => '80%',
+            3             => '60%',
+            2             => '40%',
+            1             => '20%',
+            0             => '0%',
+        };
+    }
+}
+
 // if (!function_exists('calculateOrderTotal')) {
 //     function calculateOrderTotal($)
 //     {
