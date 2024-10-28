@@ -9,6 +9,7 @@ use App\Models\CartItem;
 use App\Models\Comment;
 use App\Models\Product;
 use App\Services\CommentService;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -20,9 +21,11 @@ class ShopController extends Controller
     private const PATH_VIEW = 'client.';
 
     protected $commentService;
-    public function __construct(CommentService $commentService)
+    protected $productService;
+    public function __construct(CommentService $commentService, ProductService $productService)
     {
         $this->commentService = $commentService;
+        $this->productService = $productService;
     }
 
     public function index()
@@ -170,6 +173,12 @@ class ShopController extends Controller
 
             $comments = $this->commentService->getComment($product->id);
 
+            $relatedProducts = $this->productService->allProductRelated($product->category_id, $product->sub_category_id, $product->id);
+
+            // dd($relatedProducts->toArray());
+
+            // dd($relateds);
+
             $featureds = [
                 [
                     'img_1' => '/assets/theme/client/images/products/product-1.jpg',
@@ -263,7 +272,17 @@ class ShopController extends Controller
                 ]
             ];
 
-            return view(self::PATH_VIEW . 'shop-detail', compact('featureds', 'product', 'colors', 'sizes', 'comments'));
+            return view(
+                self::PATH_VIEW . 'shop-detail',
+                compact(
+                    'featureds',
+                    'product',
+                    'colors',
+                    'sizes',
+                    'comments',
+                    'relatedProducts'
+                )
+            );
         } catch (\Throwable $th) {
             abort(404);
         }

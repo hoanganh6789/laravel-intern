@@ -3,14 +3,25 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     private const PATH_VIEW = 'client.';
+
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function home()
     {
+
+        $top10 = $this->productService->getTop10Product();
 
         $featureds = [
             [
@@ -104,6 +115,6 @@ class HomeController extends Controller
                 'price_sale' => '49.00'
             ]
         ];
-        return view(self::PATH_VIEW . __FUNCTION__, compact('featureds'));
+        return view(self::PATH_VIEW . __FUNCTION__, compact('featureds', 'top10'));
     }
 }

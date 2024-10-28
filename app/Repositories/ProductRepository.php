@@ -25,4 +25,27 @@ class ProductRepository extends BaseRepository
     {
         return $this->model->with(['category', 'subCategory', 'tags'])->latest('id')->paginate($perPage);
     }
+
+    public function getTop10()
+    {
+        return $this->model
+            ->with(['category', 'subCategory', 'tags'])
+            ->latest('id')
+            ->limit(10)
+            ->get();
+    }
+
+    public function getProductRelated($categoryId, $subCategoryId, $productId)
+    {
+        return $this->model
+            ->with(['category', 'subCategory', 'tags'])
+            ->latest('id')
+            ->where(function ($query) use ($categoryId, $subCategoryId) {
+                $query->where('category_id', $categoryId)
+                    ->orWhere('sub_category_id', $subCategoryId);
+            })
+            ->whereNot('id', $productId)
+            ->limit(10)
+            ->get();
+    }
 }

@@ -482,7 +482,7 @@
     </div>
 
     <section class="products-section pt-0">
-        @include('client.layouts.components.products-slider', ['products' => $featureds])
+        @include('client.layouts.components.products-slider', ['products' => $relatedProducts, 'title' => 'Related Products'])
     </section>
 
 </div>

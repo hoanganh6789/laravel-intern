@@ -12,11 +12,11 @@
 </div>
 
 <section class="products-section pt-0">
-    @include('client.layouts.components.products-slider', ['title' => 'Featured Product', 'products' => $featureds])
+    @include('client.layouts.components.products-slider', ['title' => 'Featured Product', 'products' => $top10])
 </section>
 
 <section class="products-section pt-0">
-    @include('client.layouts.components.products-slider', ['title' => 'New Product', 'products' => $featureds])
+    @include('client.layouts.components.products-slider', ['title' => 'New Product', 'products' => $top10])
 
     <div class="container">
         <div class="banner banner-big-sale appear-animate" data-animation-delay="200"
@@ -39,7 +39,7 @@
 </section>
 
 <section class="products-section pt-0">
-    @include('client.layouts.components.products-slider', ['title' => 'Sale Product', 'products' => $featureds])
+    @include('client.layouts.components.products-slider', ['title' => 'Sale Product', 'products' => $top10])
 </section>
 
 <section class="feature-boxes-container">
