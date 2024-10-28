@@ -39,4 +39,19 @@ class ProductService
             return false;
         }
     }
+
+    public function getProductBySlug($slug)
+    {
+        try {
+            $product = $this->productRepository->getProductBySlug(['category', 'tags', 'galleries', 'variants.color', 'variants.size'], $slug);
+
+            $colors = $product->variants->pluck('color')->unique('id');
+            $sizes = $product->variants->pluck('size')->unique('id');
+
+            return [$product, $colors, $sizes];
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
 }

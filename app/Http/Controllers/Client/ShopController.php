@@ -166,18 +166,11 @@ class ShopController extends Controller
     {
 
         try {
-            $product = Product::with(['category', 'tags', 'galleries', 'variants.color', 'variants.size'])->where('slug', $slugProduct)->first();
-
-            $colors = $product->variants->pluck('color')->unique('id');
-            $sizes = $product->variants->pluck('size')->unique('id');
+            [$product, $colors, $sizes] = $this->productService->getProductBySlug($slugProduct);
 
             $comments = $this->commentService->getComment($product->id);
 
             $relatedProducts = $this->productService->allProductRelated($product->category_id, $product->sub_category_id, $product->id);
-
-            // dd($relatedProducts->toArray());
-
-            // dd($relateds);
 
             $featureds = [
                 [

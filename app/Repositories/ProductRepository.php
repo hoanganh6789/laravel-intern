@@ -26,6 +26,11 @@ class ProductRepository extends BaseRepository
         return $this->model->with(['category', 'subCategory', 'tags'])->latest('id')->paginate($perPage);
     }
 
+    public function getProductBySlug(array $relation, $slug)
+    {
+        return $this->model->with($relation)->where('slug', $slug)->first();
+    }
+
     public function getTop10()
     {
         return $this->model

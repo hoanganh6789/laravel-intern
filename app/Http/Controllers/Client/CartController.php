@@ -44,7 +44,7 @@ class CartController extends Controller
             $quantity = $request->quantity;
             $id = $request->id;
 
-            $cartItem = CartItem::query()->where('id', $id)->first();
+            $cartItem = $this->cartItemService->find($id);
 
             if (!$cartItem) {
                 return response()->json([

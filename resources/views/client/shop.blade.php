@@ -132,12 +132,12 @@
                         <!-- End .product-container -->
 
                         <div class="price-box">
-                            <span class="product-price">{{ formatPrice($product->price_regular) }}đ</span>
+                            {{-- <span class="product-price">{{ formatPrice($product->price_regular) }}đ</span> --}}
 
                             @if($product->price_sale > 0)
                             <span class="old-price">{{ formatPrice($product->price_regular) }}</span>
-                            <span class="product-price">{{ formatPrice($product->price_sale) }}</span>
                             @endif
+                            <span class="product-price">{{ formatPrice($product->price_sale ?: $product->price_regular) }}</span>
 
                         </div>
                         <!-- End .price-box -->

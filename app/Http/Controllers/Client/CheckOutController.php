@@ -51,8 +51,11 @@ class CheckOutController extends Controller
 
     public function handle(StoreOrderClientRequest $request)
     {
+        if ($request->payment == 'momo') {
+            return $this->checkOutServices->handleOrder($request->all());
+        }
 
-        if ($request->payment != 'momo') {
+        if ($request->payment == "thanhtoannhanhang") {
             $this->checkOutServices->handleOrder($request->all());
             Toastr::success(null, 'Mua hàng thành công');
             return redirect()->route('home');

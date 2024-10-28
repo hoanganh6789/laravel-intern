@@ -57,4 +57,20 @@ class CartItemService
             return $sum + $price * $cartItem->quantity;
         }, 0);
     }
+
+    public function find($id)
+    {
+        try {
+            $cartItem = $this->cartItemRepository->find($id);
+
+            if (!$cartItem) {
+                return null;
+            }
+
+            return $cartItem;
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
 }
