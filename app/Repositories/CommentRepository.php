@@ -17,6 +17,11 @@ class CommentRepository extends BaseRepository
         parent::__construct($model);
     }
 
+    public function getAllWithRelation($perPage = 10, array $relations)
+    {
+        return $this->model->with($relations)->latest('id')->paginate($perPage);
+    }
+
     public function findCommentByProductId($productId)
     {
         return $this->model
@@ -24,5 +29,11 @@ class CommentRepository extends BaseRepository
             ->where(['product_id' => $productId])
             ->latest('id')
             ->get();
+    }
+
+    public function deleteById($id)
+    {
+        $comment = $this->model->find($id);
+        return $comment->delete();
     }
 }

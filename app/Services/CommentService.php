@@ -15,6 +15,7 @@ class CommentService
         $this->commentRepository = $commentRepository;
     }
 
+
     public function createComment($data)
     {
         try {
@@ -30,6 +31,27 @@ class CommentService
     {
         try {
             return $this->commentRepository->findCommentByProductId($productId);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
+    public function getAllComment()
+    {
+        try {
+            return $this->commentRepository->getAllWithRelation(5, ['user', 'product']);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteById($id)
+    {
+        try {
+            $this->commentRepository->deleteById($id);
+            return true;
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return false;

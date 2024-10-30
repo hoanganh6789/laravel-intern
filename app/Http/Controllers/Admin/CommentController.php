@@ -2,17 +2,29 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helper\Alert;
 use App\Http\Controllers\Controller;
+use App\Models\Comment;
+use App\Services\CommentService;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    private const PATH_VIEW = 'admin.comments.';
+
+    protected $commentService;
+
+    public function __construct(CommentService $commentService)
+    {
+        $this->commentService = $commentService;
+    }
+
     public function index()
     {
-        //
+        $comments = $this->commentService->getAllComment();
+
+        return view(self::PATH_VIEW . __FUNCTION__, compact('comments'));
     }
 
     /**
@@ -20,7 +32,7 @@ class CommentController extends Controller
      */
     public function create()
     {
-        //
+        return view(self::PATH_VIEW . __FUNCTION__);
     }
 
     /**
@@ -36,7 +48,7 @@ class CommentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return view(self::PATH_VIEW . __FUNCTION__);
     }
 
     /**
@@ -60,6 +72,14 @@ class CommentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $comment = $this->commentService->deleteById($id);
+        
+        if (!$comment) {
+            Alert::success('Xóa không thành công', 'LuxChill Thông Báo');
+            return back();
+        }
+
+        Alert::success('Bạn đã xóa comment', 'LuxChill Thông Báo');
+        return back();
     }
 }
