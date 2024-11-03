@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Repositories\OrderRepository;
+use Illuminate\Support\Facades\Log;
 
 class OrderService
 {
@@ -33,5 +34,47 @@ class OrderService
         // dd($quantity);
 
         // dd($order);
+    }
+
+    public function getAllPaginate()
+    {
+        try {
+            return $this->orderRepository->getAllWithRelation(['orderItems'], 10);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteOrder($id)
+    {
+        try {
+            //code...
+
+            $order =  $this->findById($id);
+
+            if ($order) {
+                return $order->delete();
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
+    public function findById($id)
+    {
+        try {
+            //code...
+            $order =  $this->orderRepository->find($id);
+            if (!empty($order)) {
+                return $order;
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            Log::error($th->getMessage());
+            return false;
+        }
     }
 }

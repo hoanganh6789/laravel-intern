@@ -93,12 +93,22 @@ if (!function_exists('statusOrderClass')) {
     function statusOrderClass($status)
     {
         return match ($status) {
-            'pending'           => 'bg-warning text-dark',
+            'pending'           => 'bg-warning text-white',
             'confirmed'         => 'bg-primary text-white',
             'preparing_goods'   => 'bg-info text-white',
-            'shipping'          => 'bg-secondary text-dark',
+            'shipping'          => 'bg-secondary text-white',
             'delivered'         => 'bg-success text-white',
             'canceled'          => 'bg-danger text-white',
+        };
+    }
+}
+
+if (!function_exists('statusPaymentClass')) {
+    function statusPaymentClass($status)
+    {
+        return match ($status) {
+            'unpaid'           => 'bg-danger text-white',
+            'paid'         => 'bg-primary text-white'
         };
     }
 }

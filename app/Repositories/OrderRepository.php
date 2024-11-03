@@ -22,5 +22,8 @@ class OrderRepository extends BaseRepository
         return $this->model->latest('id')->get();
     }
 
-    
+    public function getAllWithRelation(array $relations, $paginate)
+    {
+        return $this->model->with($relations)->latest('id')->paginate($paginate);
+    }
 }
