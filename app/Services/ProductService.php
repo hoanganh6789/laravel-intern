@@ -54,4 +54,36 @@ class ProductService
             return false;
         }
     }
+
+    public function findById($id)
+    {
+        try {
+            //code...
+            $products = $this->productRepository->find($id);
+
+            if (!empty($products)) {
+                return $products;
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
+    public function findByIdWhereIn($id)
+    {
+        try {
+            //code...
+            $products = $this->productRepository->findByIdWhereIn($id);
+
+            if (!empty($products)) {
+                return $products;
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
 }

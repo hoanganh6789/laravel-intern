@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Product;
-
+use Illuminate\Support\Facades\Log;
 
 /**
  * @extends BaseRepository<Product>
@@ -52,5 +52,21 @@ class ProductRepository extends BaseRepository
             ->whereNot('id', $productId)
             ->limit(10)
             ->get();
+    }
+
+    public function findByIdWhereIn($id)
+    {
+        try {
+            //code...
+            $products = $this->model->whereIn('id', $id)->get();
+
+            if ($products) {
+                return $products;
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            Log::error($th->getMessage());
+            return false;
+        }
     }
 }

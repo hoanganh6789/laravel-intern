@@ -10,6 +10,7 @@ use App\Models\Comment;
 use App\Models\Product;
 use App\Services\CommentService;
 use App\Services\ProductService;
+use App\Services\ProductVariantService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -22,10 +23,14 @@ class ShopController extends Controller
 
     protected $commentService;
     protected $productService;
-    public function __construct(CommentService $commentService, ProductService $productService)
+
+    protected $productVariantService;
+
+    public function __construct(CommentService $commentService, ProductService $productService, ProductVariantService $productVariantService)
     {
         $this->commentService = $commentService;
         $this->productService = $productService;
+        $this->productVariantService = $productVariantService;
     }
 
     public function index()
@@ -307,10 +312,57 @@ class ShopController extends Controller
         $userId = Auth::id();
 
         if (!$userId) {
+            // Khởi tạo session cart rỗng
+            $cart = session('cart', []);
+
+            $productVariantId = $request->product_variant_id;
+            $productQuantity = $request->quantity;
+
+            // Lấy thông tin sản phẩm
+            $productVariant = $this->productVariantService->findByIdRelation($productVariantId);
+
+            if (!$productVariant) {
+                return response()->json([
+                    'message' => 'Sản phẩm không tồn tại',
+                    'status' => false
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            $price = $productVariant->product->price_sale ?: $productVariant->product->price_regular;
+            $subTotal = $price * $productQuantity;
+
+            if (isset($cart[$productVariantId])) {
+                // Đã tồn tại id thì cộng số lượng, cộng trừ số lượng
+                $cart[$productVariantId]['quantity'] += $productQuantity;
+                $cart[$productVariantId]['subTotal'] += $subTotal;
+            } else {
+                // Chưa tồn tại thì = mảng mới
+                // $cart[$productVariantId] = $request->all();
+
+                $cart[$productVariantId] = [
+                    'product_variant_id' => $productVariantId,
+                    'image' => $productVariant->product->thumb_image,
+                    'name' => $productVariant->product->name,
+                    'color' => $productVariant->color->name,
+                    'size' => $productVariant->size->name,
+                    'price' => $price,
+                    'quantity' => $productQuantity,
+                    'subTotal' => $subTotal,
+                    'slug' => $productVariant->product->slug,
+                ];
+            }
+
+            session(['cart' => $cart]);
+            $total = array_sum(array_column($cart, 'subTotal'));
+            session()->put('total', $total);
+
             return response()->json([
-                'message' => 'Hiện tại chưa hỗ trợ người dùng khách mua hàng',
-                'status' => false
-            ], Response::HTTP_BAD_REQUEST);
+                'count' => count(session('cart')),
+                'message' => 'Thêm vào giỏ hàng thành công',
+                'status' => true,
+                'carts' => $cart,
+                'total' => $total
+            ], Response::HTTP_OK);
         }
 
         try {
