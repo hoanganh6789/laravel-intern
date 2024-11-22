@@ -36,6 +36,11 @@ class CheckOutController extends Controller
 
         if ($userId) {
             [$cart, $total] = $this->cartServices->getCartWithTotal($userId);
+        } else {
+            if (session()->has('cart') && session()->get('total')) {
+                $cart = session('cart');
+                $total = session('total');
+            }
         }
 
         if (empty($cart)) {
@@ -51,6 +56,8 @@ class CheckOutController extends Controller
 
     public function handle(StoreOrderClientRequest $request)
     {
+
+        // StoreOrderClientRequest
         if ($request->payment == 'momo') {
             return $this->checkOutServices->handleOrder($request->all());
         }

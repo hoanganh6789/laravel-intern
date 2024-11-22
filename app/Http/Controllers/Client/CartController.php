@@ -64,15 +64,18 @@ class CartController extends Controller
                     $total += $productTotal;
 
                     $newItem = [
-                        'product_variant_id' => $productVariantId,
-                        'image' => $product->product->thumb_image,
-                        'name' => $product->product->name,
-                        'color' => $product->color->name,
-                        'size' => $product->size->name,
-                        'price' => $price,
-                        'quantity' => $quantity,
-                        'subTotal' => $productTotal,
-                        'slug' => $product->product->slug,
+                        'product_variant_id'    => $productVariantId,
+                        'image'                 => $product->product->thumb_image,
+                        'name'                  => $product->product->name,
+                        'color'                 => $product->color->name,
+                        'size'                  => $product->size->name,
+                        'price'                 => $price,
+                        'quantity'              => $quantity,
+                        'subTotal'              => $productTotal,
+                        'slug'                  => $product->product->slug,
+                        'sku'                   => $product->product->sku,
+                        'price_regular'         => $product->product->price_regular,
+                        'price_sale'            => $product->product->price_sale
                     ];
 
                     session()->put("cart.$productVariantId", $newItem);
@@ -155,6 +158,8 @@ class CartController extends Controller
                     $total = array_reduce($cartItem, function ($total, $item) {
                         return $total + $item['subTotal'];
                     }, 0);
+
+                    session(['total' => $total]);
                 }
 
                 return response()->json([

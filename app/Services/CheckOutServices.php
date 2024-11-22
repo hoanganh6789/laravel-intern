@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Helper\Toastr;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\User;
 use App\Repositories\OrderRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,21 +25,83 @@ class CheckOutServices
 
     public function handleOrder($data)
     {
+        $user = Auth::user();
+
         try {
-            $data['user_id'] = Auth::id();
-            $data['status_order'] ??= 'pending';
-            $data['status_payment'] ??= 'unpaid';
 
 
-            if ($data['payment'] === 'momo') {
-                $data['status_payment'] = 'paid';
-                session(['data-checkout' => $data]);
-                // return $this->handleMomo($data['total_price']);
-                return $this->momoService->redirectMomo($data['total_price']); // update new use service
+            if ($user) {
+                $data['user_id'] = Auth::id();
+                $data['status_order'] ??= 'pending';
+                $data['status_payment'] ??= 'unpaid';
+
+
+                if ($data['payment'] === 'momo') {
+                    $data['status_payment'] = 'paid';
+                    session(['data-checkout' => $data]);
+                    // return $this->handleMomo($data['total_price']);
+                    return $this->momoService->redirectMomo($data['total_price']); // update new use service
+                }
+
+
+                return $this->createOrderAndOrderItem($data);
+            } else {
+                // Transaction
+                /**
+                 * Thêm người dùng khi nhập form
+                 * Lấy id của người dùng và truyền id để insert vào bảng order
+                 * Lưu bảng order item
+                 */
+
+                if ($data['payment'] == 'momo') {
+                    $data['status_payment'] = 'paid';
+                    session(['data-checkout' => $data]);
+                    return $this->momoService->redirectMomo($data['total_price']);
+                }
+
+                // dd($data);
+
+                DB::transaction(function () use ($data) {
+                    $user = User::create([
+                        'name' => $data['user_name'],
+                        'email' => $data['user_email'],
+                        'phone' => $data['user_phone'],
+                        'is_active' => 0,
+                        'role' => 'member'
+                    ]);
+
+                    $order = Order::create([
+                        'user_id' => $user->id,
+                        'user_name' => $user->name,
+                        'user_email' => $user->email,
+                        'user_phone' => $user->phone,
+                        'user_address' => $data['user_address'],
+                        'status_order' => 'pending',
+                        'status_payment' => 'unpaid',
+                        'total_price' => $data['total_price']
+                    ]);
+
+                    foreach ($data['product'] as $key => $product) {
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'product_variant_id' => $key,
+                            'quantity' => $product['quantity'],
+                            'product_name' => $product['product_name'],
+                            'product_sku' => $product['product_sku'],
+                            'product_img_thumbnail' => $product['product_img_thumbnail'],
+                            'product_price_regular' => $product['product_price_regular'],
+                            'product_price_sale' => $product['product_price_sale'],
+                            'variant_size_name' => $product['variant_size_name'],
+                            'variant_color_name' => $product['variant_color_name'],
+                        ]);
+                    }
+                });
+
+                session()->forget('cart');
+                session()->forget('total');
+
+                return true;
             }
-
-
-            return $this->createOrderAndOrderItem($data);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return false;
@@ -49,8 +113,51 @@ class CheckOutServices
         // xử lý logic sau khi thanh toán thành công
         $data = session('data-checkout');
 
-        if (!empty($data)) {
-            $this->createOrderAndOrderItem($data);
+        $user = Auth::user();
+
+        if ($user) {
+            if (!empty($data)) {
+                $this->createOrderAndOrderItem($data);
+            }
+        } else {
+            DB::transaction(function () use ($data) {
+                $user = User::create([
+                    'name' => $data['user_name'],
+                    'email' => $data['user_email'],
+                    'phone' => $data['user_phone'],
+                    'is_active' => 0,
+                    'role' => 'member'
+                ]);
+
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'user_name' => $user->name,
+                    'user_email' => $user->email,
+                    'user_phone' => $user->phone,
+                    'user_address' => $data['user_address'],
+                    'status_order' => 'pending',
+                    'status_payment' => 'unpaid',
+                    'total_price' => $data['total_price']
+                ]);
+
+                foreach ($data['product'] as $key => $product) {
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_variant_id' => $key,
+                        'quantity' => $product['quantity'],
+                        'product_name' => $product['product_name'],
+                        'product_sku' => $product['product_sku'],
+                        'product_img_thumbnail' => $product['product_img_thumbnail'],
+                        'product_price_regular' => $product['product_price_regular'],
+                        'product_price_sale' => $product['product_price_sale'],
+                        'variant_size_name' => $product['variant_size_name'],
+                        'variant_color_name' => $product['variant_color_name'],
+                    ]);
+                }
+            });
+
+            session()->forget('cart');
+            session()->forget('total');
         }
 
         Toastr::success(null, 'Thanh toán thành công');
