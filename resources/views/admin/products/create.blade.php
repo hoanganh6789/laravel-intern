@@ -92,21 +92,11 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Mô Tả</label>
-                                <input type="text" class="form-control @error('product.description')
-                                        is-invalid
-                                    @enderror" name="product[description]" value="{{ old('product.description') }}" />
+                                <label class="form-label">Description</label>
+                                <textarea id="elm1" name="product[description]">
+                                {{ old('product.description') }}
+                                </textarea>
                                 @error('product.description')
-                                <div class="text-danger fst-italic">*{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Content</label>
-                                <input type="text" class="form-control @error('product.content')
-                                        is-invalid
-                                    @enderror" name="product[content]" value="{{ old('product.content') }}" />
-                                @error('product.content')
                                 <div class="text-danger fst-italic">*{{ $message }}</div>
                                 @enderror
                             </div>
@@ -292,6 +282,9 @@
 @section('script')
 {{-- <script src="{{ asset('assets/theme/admin/libs/dropzone/dropzone-min.js') }}"></script> --}}
 <script src="{{ asset('assets/js/admin/products/create.js') }}"></script>
+
+<!--tinymce js-->
+<script src="https://themesbrand.com/skote/layouts/assets/libs/tinymce/tinymce.min.js"></script>
 
 {{-- <script src="{{ asset('assets/theme/admin/js/pages/form-file-upload.init.js') }}"></script> --}}
 

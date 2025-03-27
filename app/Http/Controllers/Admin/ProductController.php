@@ -56,6 +56,8 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
+        // dd($request->all());
+
         [$dataProduct, $dataProductVariants, $dataProductTags, $dataProductGalleries] = $this->handleData($request);
         try {
 
@@ -86,9 +88,7 @@ class ProductController extends Controller
                 Storage::delete($dataProduct['thumb_image']);
             };
 
-            $dataHasImage = $dataProductVariants + $dataProductGalleries;
-
-            foreach ($dataHasImage as $item) {
+            foreach (array_merge($dataProductVariants, $dataProductGalleries) as $item) {
                 if (!empty($item['image']) && Storage::exists($item['image'])) {
                     Storage::delete($item['image']);
                 }

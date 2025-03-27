@@ -33,7 +33,7 @@ Route::resource('orders', OrderController::class);
 Route::resource('flash-sales', FlashSaleController::class);
 Route::resource('coupons', CouponController::class);
 Route::resource('banner', BannerController::class);
-Route::resource('menu', MenuController::class);
+Route::resource('menus', MenuController::class);
 
 // variants for product
 Route::resource('product-sizes', ProductSizeController::class);
